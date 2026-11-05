@@ -686,6 +686,41 @@
         .x-card:hover, .x-card:active, .x-app button:active, .x-menu button:active, .x-pm button:active, .x-tho:active { transform: none !important; }
       }
     </style>
+    <style>
+      /* floating assistant + voice */
+      .x-xa-fab { position: fixed; right: 24px; bottom: var(--xa-b, 24px); z-index: 90; width: 52px; height: 52px; padding: 0; border-radius: 50%; border: 1px solid transparent; background: var(--fill-primary); color: var(--text-primary-on); display: grid; place-items: center; cursor: pointer; box-shadow: var(--hark-shadow); transition: bottom 200ms var(--ease-out), transform 200ms var(--ease-out), opacity 200ms; }
+      .x-xa-fab:hover { transform: scale(1.05); }
+      .x-xa-fab:active { transform: scale(0.94); }
+      .x-xa-fab.is-open, body:has(#aiPanel.is-open) .x-xa-fab { opacity: 0; pointer-events: none; transform: scale(0.8); }
+      .x-xa svg, .x-xa-fab svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+      .x-xa { position: fixed; right: 24px; bottom: var(--xa-b, 24px); z-index: 91; width: 360px; height: 480px; max-width: calc(100vw - 48px); max-height: calc(100dvh - var(--xa-b, 24px) - 16px); display: flex; flex-direction: column; background: var(--x-tile); color: var(--text-primary); border: 1px solid var(--x-line); border-radius: var(--r-l); box-shadow: var(--hark-shadow); overflow: hidden; transform-origin: bottom right; opacity: 0; transform: scale(0.85); visibility: hidden; transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out), visibility 0s 200ms; }
+      .x-xa.is-open { opacity: 1; transform: none; visibility: visible; transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out); }
+      .x-xa-head { display: flex; align-items: center; gap: 4px; padding: 8px 8px 8px 16px; border-bottom: 1px solid var(--x-line); }
+      .x-xa-head h2 { font: var(--type-label); font-weight: var(--weight-medium); margin: 0; }
+      .x-xa-head span { font: var(--type-caption); color: var(--text-secondary); margin-right: auto; }
+      .x-xa-ib { flex: none; width: 44px; height: 44px; min-width: 44px; min-height: 44px; box-sizing: border-box; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--text-secondary); display: grid; place-items: center; cursor: pointer; }
+      .x-xa-ib:hover { background: var(--x-hover); color: var(--text-primary); }
+      .x-xa-ib[hidden] { display: none; }
+      .x-xa-ib.is-live { color: var(--fill-system-red); }
+      .x-xa-log { flex: 1; overflow-y: auto; padding: 14px 14px 6px; display: flex; flex-direction: column; gap: 10px; }
+      .x-xa-msg { max-width: 88%; padding: 9px 13px; border-radius: var(--r-m); font: var(--type-body); white-space: pre-line; overflow-wrap: anywhere; }
+      .x-xa-msg--me { align-self: flex-end; background: var(--fill-primary); color: var(--text-primary-on); border-bottom-right-radius: 6px; }
+      .x-xa-msg--bot { align-self: flex-start; background: var(--x-hover); border: 1px solid var(--x-line); border-bottom-left-radius: 6px; }
+      .x-xa-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+      .x-xa-chip { min-height: 32px; max-width: 100%; padding: 4px 12px; border: 1px solid var(--x-line); border-radius: var(--r-pill); background: var(--x-tile); color: var(--text-primary); font: var(--type-small); text-align: left; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .x-xa-chip:hover { border-color: var(--text-secondary); }
+      .x-xa-chip small { color: var(--text-secondary); margin-left: 6px; }
+      .x-xa-form { display: flex; align-items: center; gap: 4px; padding: 8px; border-top: 1px solid var(--x-line); }
+      .x-xa-form input { flex: 1; min-width: 0; min-height: var(--tap); padding: 0 12px; border: 1px solid var(--x-line); border-radius: var(--r-pill); background: var(--x-tile); color: var(--text-primary); font: var(--type-body); }
+      .x-xa-form input:focus { outline: 2px solid var(--x-accent); outline-offset: -1px; }
+      :root[data-theme="black"] .x-xa { background: #000; border-color: #1f1f1f; box-shadow: none; }
+      :root[data-theme="black"] .x-xa-fab { background: #000; color: #ededed; border-color: #1f1f1f; box-shadow: none; }
+      :root[data-theme="black"] .x-xa-msg--bot, :root[data-theme="black"] .x-xa-chip, :root[data-theme="black"] .x-xa-form input { background: #000; border-color: #1f1f1f; }
+      @media (max-width: 767px) {
+        .x-xa { left: 0; right: 0; bottom: 0; width: 100%; max-width: none; height: min(480px, 85dvh); max-height: 85dvh; border-radius: var(--r-l) var(--r-l) 0 0; border-bottom: 0; transform-origin: bottom center; transform: translateY(24px); padding-bottom: env(safe-area-inset-bottom); }
+      }
+      @media (prefers-reduced-motion: reduce) { .x-xa, .x-xa-fab { transition-duration: 0.01ms !important; } }
+    </style>
   </head>
   <body>
     <div class="page" id="top">
@@ -768,7 +803,7 @@
         </button>
         <div class="x-toast" id="toast" role="status" aria-live="polite"><span id="toastMsg"></span><button id="toastUndo" type="button">Undo</button></div>
         <aside class="x-ai" id="aiPanel" aria-label="Assistant" aria-hidden="true" inert>
-          <div class="x-ai-head"><h2>Assistant</h2><span class="x-ai-hint">Offline · Ctrl J</span><span class="x-gap"></span>
+          <div class="x-ai-head"><h2>Assistant</h2><span class="x-ai-hint">Offline</span><span class="x-gap"></span>
             <button class="x-ib" data-ai="close" title="Close (Esc)" aria-label="Close assistant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
           <form class="x-ai-form" id="aiForm"><textarea id="aiIn" rows="2" placeholder="Ask for a table, checklist, outline…" aria-label="Prompt"></textarea><button class="x-ai-btn x-ai-btn--go" type="submit">Go</button></form>
           <div class="x-ai-chips" id="aiChips"></div>
@@ -2937,6 +2972,229 @@
           else if (e.key.length === 1) e.stopPropagation();
         });
         window.addEventListener("resize", function () { close(); });
+      })();
+    </script>
+    <script>
+      /* XA start: floating assistant. Pure core (XA.parse / XA.answer) + browser UI below */
+      var XA = (function () {
+        var STOP = /^(the|a|an|my|is|are|was|of|to|for|on|in|at|and|or|me|i|it|this|that|when|what|whats|due|about|notes?|find|search|with|please|show|any|all)$/;
+        var MON = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], WD = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+        function pad(n) { return (n < 10 ? "0" : "") + n; } function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+        function key(t) { t = new Date(t); return t.getFullYear() + "-" + pad(t.getMonth() + 1) + "-" + pad(t.getDate()); }
+        function toks(s) { return (String(s || "").toLowerCase().match(/[a-z0-9]+/g) || []).filter(function (w) { return !STOP.test(w); }); }
+        function score(q, title) {
+          var a = toks(q), b = toks(title), hit = 0;
+          if (!a.length || !b.length) return 0;
+          a.forEach(function (w) { if (b.some(function (x) { return x === w || (Math.min(x.length, w.length) > 3 && (x.indexOf(w) === 0 || w.indexOf(x) === 0)); })) hit++; });
+          return hit / (a.length + b.length - hit);
+        }
+        function day(ms) { var t = new Date(ms), n = new Date(); n.setHours(0, 0, 0, 0); t.setHours(0, 0, 0, 0); var d = Math.round((t - n) / 864e5); return d === 0 ? "Today" : d === 1 ? "Tomorrow" : d === -1 ? "Yesterday" : t.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" }); }
+        function hm(ms) { return new Date(ms).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" }); } function dkey(k) { return k ? day(new Date(k + "T12:00")) : "No date"; }
+        /* pull a date/time out of free text; returns { at, date, time, rest } */
+        function when(s, now) {
+          var rest = " " + s + " ", base = null, h = null, mi = 0, m, n = new Date(now);
+          function cut(re) { var x = rest.match(re); if (x) rest = rest.replace(x[0], " "); return x; }
+          function off(d) { var t = new Date(now); t.setHours(0, 0, 0, 0); t.setDate(t.getDate() + d); return t; }
+          if ((m = cut(/\s(?:at\s+|by\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)\b/i))) { h = (+m[1] % 12) + (/pm/i.test(m[3]) ? 12 : 0); mi = +(m[2] || 0); }
+          else if ((m = cut(/\sat\s+(\d{1,2})(?::(\d{2}))?\b/i))) { h = +m[1]; mi = +(m[2] || 0); if (h < 8) h += 12; }
+          else if ((m = cut(/\s(?:at\s+|in\s+the\s+|this\s+)?(noon|tonight|evening|morning|afternoon)\b/i))) { h = { noon: 12, tonight: 20, evening: 18, morning: 9, afternoon: 15 }[m[1].toLowerCase()]; if (/tonight/i.test(m[1])) base = off(0); }
+          if ((m = cut(/\s(?:on\s+|by\s+|for\s+)?(day after tomorrow|today|tomorrow|tmrw|tmr)\b/i))) base = off({ today: 0, tomorrow: 1, tmrw: 1, tmr: 1 }[m[1].toLowerCase()] == null ? 2 : { today: 0, tomorrow: 1, tmrw: 1, tmr: 1 }[m[1].toLowerCase()]);
+          else if ((m = cut(/\sin\s+(\d+)\s+(day|week)s?\b/i))) base = off(+m[1] * (/week/i.test(m[2]) ? 7 : 1));
+          else if ((m = cut(/\s(?:on\s+|by\s+)?next\s+week\b/i))) base = off(7);
+          else if ((m = cut(/\s(?:on\s+|by\s+|this\s+)?(next\s+)?(sun|mon|tues?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur)?)(?:day)?\b/i))) { var w = WD.indexOf(m[2].slice(0, 3).toLowerCase()), dd = (w - n.getDay() + 7) % 7 || 7; base = off(dd + (m[1] && dd < 7 ? 7 : 0)); }
+          else if ((m = cut(/\s(?:on\s+|by\s+)?(\d{1,2})(?:st|nd|rd|th)?\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/i)) || (m = cut(/\s(?:on\s+|by\s+)?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+(\d{1,2})(?:st|nd|rd|th)?\b/i))) {
+            var mo = MON.indexOf((isNaN(m[1]) ? m[1] : m[2]).slice(0, 3).toLowerCase()), dn = +(isNaN(m[1]) ? m[2] : m[1]);
+            base = new Date(n.getFullYear(), mo, dn); if (base < off(0)) base.setFullYear(base.getFullYear() + 1);
+          } else if ((m = cut(/\s(\d{4})-(\d\d)-(\d\d)\b/))) base = new Date(+m[1], +m[2] - 1, +m[3]);
+          var date = !!base, at = null;
+          if (h != null) { at = new Date(base || off(0)); at.setHours(h, mi, 0, 0); if (!date && at <= n) at.setDate(at.getDate() + 1); }
+          else if (base) at = base;
+          rest = rest.replace(/\s+/g, " ").replace(/\s+(?:on|by|at|for|due)\s*$/i, "").replace(/[.?!]+$/, "").trim();
+          return { at: at, date: date, time: h != null, rest: rest };
+        }
+        function parse(text) {
+          var s = String(text || "").trim(), m;
+          if ((m = s.match(/^(?:please\s+)?(?:add|create|new|make)\s+(?:a\s+)?(?:new\s+)?(?:task|to-?do)\s*(?:to\s+|:\s*)?(.+)$/i))) return { intent: "addTask", text: m[1] };
+          if ((m = s.match(/^(?:please\s+)?(?:remind me|set (?:a )?reminder|add (?:a )?reminder)\s*(?:to\s+|about\s+|that\s+|:\s*)?(.+)$/i))) return { intent: "addReminder", text: m[1] };
+          if ((m = s.match(/\bwhen\s+(?:is|are|was)\s+(?:the\s+|my\s+)?(.+?)\s+due\b/i)) || (m = s.match(/\bwhen'?s\s+(?:the\s+|my\s+)?(.+?)\s+due\b/i)) || (m = s.match(/\b(?:due date|deadline)\s+(?:of|for)\s+(.+?)\??$/i))) return { intent: "due", q: m[1] };
+          if ((m = s.match(/^(?:find|search)(?:\s+(?:my\s+)?notes?)?\s+(?:for\s+|about\s+|on\s+)?(.+?)\??$/i)) || (m = s.match(/\bnotes?\s+(?:about|on|for|with|mentioning)\s+(.+?)\??$/i))) return { intent: "notes", q: m[1] };
+          if (/\b(overdue|late|missed)\b/i.test(s)) return { intent: "overdue" };
+          if (/\breminders?\b/i.test(s)) return { intent: "reminders", range: /tomorrow/i.test(s) ? "tomorrow" : /week/i.test(s) ? "week" : "today" };
+          if (/\b(habits?|streaks?)\b/i.test(s)) return { intent: "habits", q: s.replace(/\b(how'?s|how is|how are|my|habits?|streaks?|what|is|are|the|show|going)\b|[?']/gi, " ").trim() };
+          if (/\b(tasks?|to-?dos?|pending|left|remaining|agenda)\b/i.test(s)) return { intent: "tasks" };
+          return { intent: "other" };
+        }
+        function streak(h, now) {
+          var set = {}, cur = 0, o; (h.dates || []).forEach(function (k) { set[k] = 1; });
+          function d(i) { var t = new Date(now); t.setHours(12, 0, 0, 0); t.setDate(t.getDate() + i); return t; }
+          if ((h.per || 7) >= 7) { o = set[key(d(0))] ? 0 : -1; while (set[key(d(o))]) { cur++; o--; } return cur + (cur === 1 ? " day" : " days"); }
+          var ws = d(0); ws.setDate(ws.getDate() - (ws.getDay() + 6) % 7);
+          function met(w) { var c = 0; for (var i = 0; i < 7; i++) { var t = new Date(w); t.setDate(t.getDate() + i); if (set[key(t)]) c++; } return c >= h.per; }
+          if (!met(ws)) ws.setDate(ws.getDate() - 7);
+          while (met(ws)) { cur++; ws.setDate(ws.getDate() - 7); }
+          return cur + (cur === 1 ? " week" : " weeks");
+        }
+        var HELP = ["What tasks are left?", "What's overdue?", "My reminders this week", "When is the report due?", "Notes about meeting", "How's my gym habit?", "Add task buy milk tomorrow", "Remind me to call mom at 5pm"];
+        function answer(text, src, now) {
+          now = now || Date.now();
+          var p = parse(text), T = key(now), PR = { High: 0, Med: 1, Low: 2 }, tasks = (src.tasks || []).filter(function (t) { return !t.done; });
+          function tchip(t) { return { label: t.title, sub: t.due ? (t.due < T ? "Overdue · " : "") + dkey(t.due) : "", open: "task:" + t.id }; }
+          function rchip(r) { return { label: r.title, sub: day(r.at) + " · " + hm(r.at), open: "reminder:" + r.id }; }
+          var od = tasks.filter(function (t) { return t.due && t.due < T; }), td = tasks.filter(function (t) { return t.due === T; });
+          var rem = (src.reminders || []).filter(function (r) { return !r.done; }).sort(function (a, b) { return a.at - b.at; });
+          if (p.intent === "tasks") {
+            var rank = function (t) { return (t.due && t.due < T ? 0 : t.due === T ? 1 : 2) + "|" + (t.due || "9999") + "|" + (PR[t.priority] == null ? 1 : PR[t.priority]); };
+            var top = tasks.slice().sort(function (a, b) { return rank(a) < rank(b) ? -1 : rank(a) > rank(b) ? 1 : 0; }).slice(0, 5);
+            if (!tasks.length) return { text: "All clear. No tasks left." };
+            return { text: td.length + " today, " + od.length + " overdue, " + (tasks.length - td.length - od.length) + " upcoming.\nTop " + top.length + ":", chips: top.map(tchip), say: top.map(function (t) { return t.title; }).join(", ") };
+          }
+          if (p.intent === "overdue") {
+            var ro = rem.filter(function (r) { return r.at < now; });
+            if (!od.length && !ro.length) return { text: "Nothing overdue. Nice." };
+            return { text: (od.length ? od.length + " overdue task" + (od.length > 1 ? "s" : "") : "") + (od.length && ro.length ? " and " : "") + (ro.length ? ro.length + " missed reminder" + (ro.length > 1 ? "s" : "") : "") + ".", chips: od.map(tchip).concat(ro.map(rchip)) };
+          }
+          if (p.intent === "reminders") {
+            var s0 = new Date(now); s0.setHours(0, 0, 0, 0); var a = +s0 + (p.range === "tomorrow" ? 864e5 : 0), b = p.range === "week" ? +s0 + 7 * 864e5 : a + 864e5, lbl = p.range === "week" ? "this week" : p.range;
+            var rl = rem.filter(function (r) { return r.at >= a && r.at < b; });
+            return { text: rl.length ? rl.length + " reminder" + (rl.length > 1 ? "s" : "") + " " + lbl + ":" : "No reminders " + lbl + ".", chips: rl.map(rchip), say: rl.map(function (r) { return r.title + " at " + hm(r.at); }).join(", ") };
+          }
+          if (p.intent === "due") {
+            var c = (src.tasks || []).map(function (t) { return { n: t.title, k: "task", id: t.id, d: t.due ? dkey(t.due) : "" }; })
+              .concat((src.projects || []).map(function (x) { return { n: x.name, k: "project", id: x.id, d: x.due ? dkey(x.due) : "" }; }))
+              .concat((src.reminders || []).map(function (r) { return { n: r.title, k: "reminder", id: r.id, d: day(r.at) + " · " + hm(r.at) }; }))
+              .map(function (x) { x.s = score(p.q, x.n); return x; }).sort(function (x, y) { return y.s - x.s; });
+            var best = c[0];
+            if (best && best.s >= 0.34) return { text: "“" + best.n + "” (" + best.k + ") " + (best.d ? "is due " + best.d + "." : "has no due date."), chips: [{ label: best.n, sub: best.d, open: best.k + ":" + best.id }] };
+            return { text: "No match for “" + p.q + "”. Did you mean:", chips: c.slice(0, 3).map(function (x) { return { label: x.n, open: "ask:when is " + x.n + " due" }; }), say: "No match." };
+          }
+          if (p.intent === "notes") {
+            var q = toks(p.q);
+            var hits = (src.notes || []).map(function (n) {
+              var title = String(n.title || "").toLowerCase(), hay = title + " " + String(n.body || "").toLowerCase() + " " + (n.tags || []).join(" ").toLowerCase(), h = 0, th = 0;
+              q.forEach(function (w) { if (hay.indexOf(w) > -1) h++; if (title.indexOf(w) > -1) th++; });
+              return { n: n, s: q.length ? h / q.length + th * 0.5 : 0, h: h };
+            }).filter(function (x) { return x.h && x.h / q.length >= 0.5; }).sort(function (x, y) { return y.s - x.s; }).slice(0, 6);
+            return { text: hits.length ? hits.length + " note" + (hits.length > 1 ? "s" : "") + " about “" + p.q + "”:" : "No notes about “" + p.q + "”.", chips: hits.map(function (x) { return { label: x.n.title || "Untitled", open: "note:" + x.n.id }; }) };
+          }
+          if (p.intent === "habits") {
+            var hs = src.habits || [], one = p.q && hs.map(function (h) { return { h: h, s: score(p.q, h.name) }; }).sort(function (x, y) { return y.s - x.s; })[0];
+            if (one && one.s >= 0.34) hs = [one.h];
+            if (!hs.length) return { text: "No habits yet." };
+            return { text: hs.map(function (h) { return (h.emoji ? h.emoji + " " : "") + h.name + ": streak " + streak(h, now) + (h.per >= 7 ? "" : " (" + h.per + "×/week goal)"); }).join("\n"), chips: hs.map(function (h) { return { label: h.name, open: "habit:" + h.id }; }) };
+          }
+          if (p.intent === "addTask") {
+            var w = when(p.text, now), t = cap(w.rest);
+            if (!t) return { text: "What should the task say?" };
+            var nt = src.addTask({ title: t, due: w.at ? key(w.at) : "" });
+            return { text: "Added task “" + t + "”" + (nt.due ? " for " + dkey(nt.due) : "") + ".", chips: [tchip(nt)] };
+          }
+          if (p.intent === "addReminder") {
+            var w2 = when(p.text, now), t2 = cap(w2.rest.replace(/^to\s+/i, "")), at = w2.at;
+            if (!t2) return { text: "What should I remind you about?" };
+            if (!at) at = new Date(Math.ceil((now + 36e5) / 9e5) * 9e5); else if (!w2.time) at.setHours(9, 0, 0, 0);
+            var nr = src.addReminder({ title: t2, at: +at });
+            return { text: "Reminder set: “" + t2 + "”, " + day(nr.at) + " at " + hm(nr.at) + ".", chips: [rchip(nr)] };
+          }
+          if (src.note != null && src.canPass && src.canPass(text, src.note)) return { pass: true, text: "Sent to the note assistant." };
+          return { text: "I answer from your tasks, reminders, habits and notes. Try:", chips: HELP.map(function (h) { return { label: h, open: "ask:" + h }; }), say: "Here are some things you can ask." };
+        }
+        return { parse: parse, answer: answer, when: when, score: score };
+      })();
+      /* XA end */
+      (function () {
+        if (typeof document === "undefined" || !window.NX) return;
+        var SV = '<svg viewBox="0 0 24 24" aria-hidden="true">', I = {
+          spark: SV + '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></svg>',
+          mic: SV + '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>', send: SV + '<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>',
+          vol: SV + '<path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>', mute: SV + '<path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg>', x: SV + '<path d="M18 6 6 18M6 6l12 12"/></svg>' };
+        function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+        var fab = document.createElement("button"), pn = document.createElement("section");
+        fab.className = "x-xa-fab"; fab.type = "button"; fab.title = "Assistant (Ctrl+J)"; fab.setAttribute("aria-label", "Open assistant"); fab.setAttribute("aria-expanded", "false"); fab.innerHTML = I.spark;
+        pn.className = "x-xa"; pn.setAttribute("role", "dialog"); pn.setAttribute("aria-label", "Assistant"); pn.inert = true;
+        pn.innerHTML = '<div class="x-xa-head"><h2>Assistant</h2><span>Offline · Ctrl J</span><button class="x-xa-ib" type="button" data-xa="mute"></button><button class="x-xa-ib" type="button" data-xa="close" aria-label="Close assistant">' + I.x + '</button></div>' +
+          '<div class="x-xa-log" aria-live="polite"></div><form class="x-xa-form"><input type="text" placeholder="Ask about tasks, notes, habits…" aria-label="Message" autocomplete="off" />' +
+          '<button class="x-xa-ib" type="button" data-xa="mic" aria-label="Speak">' + I.mic + '</button><button class="x-xa-ib" type="submit" aria-label="Send">' + I.send + "</button></form>";
+        document.body.appendChild(fab); document.body.appendChild(pn);
+        var log = pn.querySelector(".x-xa-log"), inp = pn.querySelector("input"), micB = pn.querySelector('[data-xa="mic"]'), muteB = pn.querySelector('[data-xa="mute"]');
+        var SR = window.SpeechRecognition || window.webkitSpeechRecognition, rec = null, muted = false, greeted = false, phone = matchMedia("(max-width: 767px)");
+        try { muted = localStorage.getItem("xa-muted") === "1"; } catch (e) {}
+        if (!SR) micB.hidden = true;
+        function paintMute() { muteB.innerHTML = muted ? I.mute : I.vol; muteB.setAttribute("aria-label", muted ? "Unmute replies" : "Mute replies"); muteB.setAttribute("aria-pressed", String(muted)); } paintMute();
+        function D() { return NX.data(); } function src() {
+          var n = typeof current === "function" && document.getElementById("app").classList.contains("is-editing") ? current() : null;
+          return {
+            tasks: D().tasks || [], reminders: D().reminders || [], projects: D().projects || [], habits: D().habits || [],
+            notes: typeof store === "object" ? store.getNotes().filter(function (x) { return !x.archived; }) : [], note: n ? n.body || "" : null,
+            canPass: function (t, body) { return typeof NoteAI === "object" && !NoteAI.run(t, body).error; },
+            addTask: function (o) { var t = { id: NX.id(), title: o.title, done: false, priority: "Med", due: o.due, project: "" }; D().tasks.push(t); NX.save(); redraw("todo"); return t; },
+            addReminder: function (o) { var r = { id: NX.id(), title: o.title, at: o.at, repeat: "none", link: "", done: false }; D().reminders.push(r); NX.save(); redraw("reminders"); return r; }
+          };
+        }
+        function redraw(m) { if (NX.mode() === m) { var b = document.querySelector('[data-nx="' + m + '"]'); if (b) b.click(); } }
+        function bubble(who, text, chips) {
+          var el = document.createElement("div"); el.className = "x-xa-msg x-xa-msg--" + who; el.textContent = text;
+          if (chips && chips.length) el.insertAdjacentHTML("beforeend", '<div class="x-xa-chips">' + chips.map(function (c) {
+            var pid = c.open.indexOf("project:") === 0 ? ' data-nopen="' + esc(c.open.slice(8)) + '"' : "";
+            return '<button type="button" class="x-xa-chip" data-xa-open="' + esc(c.open) + '"' + pid + ">" + esc(c.label) + (c.sub ? "<small>" + esc(c.sub) + "</small>" : "") + "</button>";
+          }).join("") + "</div>");
+          log.appendChild(el); log.scrollTop = log.scrollHeight;
+        }
+        function speak(t) { if (muted || !window.speechSynthesis || !t) return;
+          var u = new SpeechSynthesisUtterance(t.replace(/[“”]/g, "").replace(/\n/g, ". ")), vs = speechSynthesis.getVoices();
+          u.lang = "en-IN"; u.voice = vs.filter(function (v) { return v.lang === "en-IN" || v.lang === "en_IN"; })[0] || vs.filter(function (v) { return /^en/i.test(v.lang); })[0] || null;
+          speechSynthesis.cancel(); speechSynthesis.speak(u);
+        }
+        function send(text) { text = String(text || "").trim(); if (!text) return;
+          inp.value = ""; bubble("me", text);
+          var r; try { r = XA.answer(text, src()); } catch (e) { r = { text: "Something went wrong reading your data." }; }
+          bubble("bot", r.text, r.chips); speak(r.say ? r.text.replace(/:$/, "") + ". " + r.say : r.text);
+          if (r.pass) {
+            var pin = document.getElementById("aiIn"), ai = document.getElementById("aiPanel"), b = document.querySelector('.x-tools [data-ai="panel"]') || document.querySelector('[data-ai="panel"]');
+            if (pin && ai && b) { pin.value = text; if (!ai.classList.contains("is-open")) b.click(); document.getElementById("aiForm").requestSubmit(); setOpen(false, true); }
+          }
+        }
+        function openRef(ref) {
+          var i = ref.indexOf(":"), k = ref.slice(0, i), id = ref.slice(i + 1), nav = { task: "todo", reminder: "reminders", habit: "habits" }[k];
+          if (k === "ask") return send(id);
+          if (nav) { var b = document.querySelector('[data-nx="' + nav + '"]'); if (b) b.click(); }
+          else if (k === "note" && typeof select === "function") { NX.hide(); if (typeof setView === "function" && state.view !== "notes") setView("notes"); select(id); }
+          if (phone.matches) setOpen(false, true);
+        }
+        function setOpen(on, quiet) {
+          pn.classList.toggle("is-open", on); pn.inert = !on; fab.classList.toggle("is-open", on); fab.setAttribute("aria-expanded", String(on));
+          if (on) { if (!greeted) { greeted = true; bubble("bot", "Hi! Ask about your tasks, reminders, habits or notes.", ["What tasks are left?", "My reminders today", "How's my gym habit?"].map(function (h) { return { label: h, open: "ask:" + h }; })); }
+            setTimeout(function () { inp.focus(); }, 60);
+          } else { if (rec) rec.abort(); if (window.speechSynthesis) speechSynthesis.cancel(); if (!quiet) fab.focus(); }
+        }
+        function listen() { if (rec) return rec.stop(); if (window.speechSynthesis) speechSynthesis.cancel();
+          rec = new SR(); rec.lang = "en-IN"; rec.interimResults = true; rec.continuous = false;
+          rec.onresult = function (e) {
+            var fin = "", mid = ""; for (var i = e.resultIndex; i < e.results.length; i++) { if (e.results[i].isFinal) fin += e.results[i][0].transcript; else mid += e.results[i][0].transcript; }
+            inp.value = fin || mid; if (fin) send(fin); };
+          rec.onend = rec.onerror = function () { rec = null; micB.classList.remove("is-live"); micB.setAttribute("aria-label", "Speak"); };
+          try { rec.start(); micB.classList.add("is-live"); micB.setAttribute("aria-label", "Stop listening"); } catch (e) { rec = null; }
+        }
+        fab.addEventListener("click", function () { setOpen(true); });
+        pn.querySelector("form").addEventListener("submit", function (e) { e.preventDefault(); send(inp.value); });
+        pn.addEventListener("click", function (e) {
+          var c = e.target.closest("[data-xa-open]"), b = e.target.closest("[data-xa]");
+          if (c) openRef(c.dataset.xaOpen);
+          else if (b && b.dataset.xa === "close") setOpen(false);
+          else if (b && b.dataset.xa === "mic") listen();
+          else if (b && b.dataset.xa === "mute") { muted = !muted; try { localStorage.setItem("xa-muted", muted ? "1" : "0"); } catch (x) {} if (muted && window.speechSynthesis) speechSynthesis.cancel(); paintMute(); }
+        });
+        pn.addEventListener("keydown", function (e) { if (e.key === "Escape") { e.stopPropagation(); setOpen(false); } });
+        window.addEventListener("keydown", function (e) { if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === "j") { e.preventDefault(); e.stopImmediatePropagation(); setOpen(!pn.classList.contains("is-open")); } }, true); /* capture: beats the old editor panel's Ctrl+J */
+        /* keep the button above visible toasts and the phone's new-note button */
+        var app = document.getElementById("app"), queued = false;
+        function lift() { queued = false; var b = 24;
+          document.querySelectorAll(".x-toast.is-on").forEach(function (t) { b = Math.max(b, (parseFloat(getComputedStyle(t).bottom) || 0) + t.offsetHeight + 12); });
+          var f = document.querySelector(".x-fab");
+          if (f && getComputedStyle(f).display !== "none" && !app.classList.contains("is-editing")) b = Math.max(b, (parseFloat(getComputedStyle(f).bottom) || 0) + f.offsetHeight + 12);
+          document.documentElement.style.setProperty("--xa-b", Math.round(b) + "px");
+        }
+        function soon() { if (!queued) { queued = true; requestAnimationFrame(lift); } }
+        new MutationObserver(soon).observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class"] }); window.addEventListener("resize", soon); lift();
       })();
     </script>
   </body>
