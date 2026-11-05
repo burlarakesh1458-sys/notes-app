@@ -502,6 +502,62 @@
       .x-pm-div { height: 1px; margin: 6px 4px; background: var(--x-line); }
       @media (prefers-reduced-motion: reduce) { .x-pm, .x-plus { transition: none; } }
     </style>
+    <style>
+      /* Minimal dashboard: only #xmd shows inside the dashboard view */
+      #dash > :not(.x-md) { display: none !important; }
+      .x-md { --x-md-amber: light-dark(#d97706, #fbbf24); width: 100%; max-width: 1100px; display: grid; gap: 32px; padding: 16px 0 48px; color: var(--text-primary); font-family: "Google Sans Flex", "Google Sans", "Product Sans", system-ui, sans-serif; font-size: 15px; line-height: 24px; }
+      .x-md h2, .x-md h3, .x-md p, .x-md ul { margin: 0; padding: 0; list-style: none; }
+      .x-md-head h2 { font-size: 28px; line-height: 36px; font-weight: 500; letter-spacing: -0.01em; }
+      .x-md-head h2 span { color: var(--x-grey); font-weight: 400; }
+      .x-md-head p { margin-top: 8px; }
+      .x-md-head p, .x-md-muted { font-size: 13px; line-height: 20px; color: var(--x-grey); }
+      .x-md-cols { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+      @media (max-width: 900px) { .x-md-cols { grid-template-columns: minmax(0, 1fr); } }
+      .x-md-cal { position: relative; border: 1px solid var(--x-line); border-radius: 12px; padding: 16px; background: var(--x-tile); }
+      .x-md-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+      .x-md-bar h3 { font-size: 20px; line-height: 28px; font-weight: 500; margin-right: auto; }
+      .x-md-ib, .x-md-btn { font: inherit; font-size: 13px; color: inherit; background: none; border: 1px solid var(--x-line); border-radius: 12px; height: 32px; min-width: 32px; padding: 0 12px; cursor: pointer; }
+      .x-md-ib { padding: 0; font-size: 16px; line-height: 1; }
+      .x-md-ib:hover, .x-md-btn:hover, .x-md-pill:hover, .x-md-item:hover { background: var(--x-hover); }
+      .x-md :focus-visible { outline: 2px solid var(--x-accent); outline-offset: 2px; }
+      .x-md-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+      .x-md-wd { font-size: 13px; color: var(--x-grey); text-align: center; padding-bottom: 8px; }
+      .x-md-day { font: inherit; color: inherit; background: none; border: 0; border-radius: 12px; min-height: 64px; padding: 8px 0; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+      .x-md-day:hover, .x-md-day.is-open { background: var(--x-hover); }
+      .x-md-num { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; border: 1px solid transparent; }
+      .x-md-day.is-today .x-md-num { border-color: var(--x-accent); color: var(--x-accent); font-weight: 500; }
+      .x-md-dots { display: flex; align-items: center; gap: 4px; height: 12px; }
+      .x-md-dots small { font-size: 12px; line-height: 12px; color: var(--x-grey); }
+      .x-md-dots i, .x-md-dot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
+      .x-md .is-rem { background: var(--x-accent); }
+      .x-md .is-task { background: var(--x-md-amber); }
+      .x-md .is-late { background: var(--fill-system-red); }
+      .x-md-pop { position: absolute; z-index: 5; width: 288px; max-width: calc(100% - 32px); background: var(--x-tile); border: 1px solid var(--x-line); border-radius: 12px; padding: 16px; box-shadow: 0 8px 24px rgb(0 0 0 / 0.08); display: grid; gap: 8px; }
+      .x-md-pophead { display: flex; justify-content: space-between; align-items: center; font-weight: 500; }
+      .x-md-list li + li { border-top: 1px solid var(--x-line); }
+      .x-md-item { font: inherit; color: inherit; background: none; border: 0; width: calc(100% + 16px); margin: 0 -8px; display: flex; align-items: center; gap: 8px; padding: 8px; min-height: 40px; border-radius: 8px; text-align: left; cursor: pointer; }
+      .x-md-item span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .x-md-item small { font-size: 13px; color: var(--x-grey); flex: none; }
+      .x-md-item.is-done span { text-decoration: line-through; color: var(--x-grey); }
+      .x-md-row { display: flex; gap: 8px; padding-top: 8px; }
+      .x-md-add { display: flex; gap: 8px; padding-top: 8px; }
+      .x-md-add input { font: inherit; font-size: 13px; color: inherit; background: transparent; border: 1px solid var(--x-line); border-radius: 12px; height: 32px; padding: 0 12px; min-width: 0; flex: 1; }
+      .x-md-add input[type="time"] { flex: none; width: 104px; padding: 0 8px; }
+      .x-md-side { display: grid; gap: 32px; }
+      .x-md-sh { display: flex; justify-content: space-between; align-items: center; min-height: 24px; margin-bottom: 8px; }
+      .x-md-sh h3 { font-size: 13px; font-weight: 500; color: var(--x-grey); }
+      .x-md-link { font: inherit; font-size: 13px; color: var(--x-accent); background: none; border: 0; padding: 4px 0; cursor: pointer; }
+      .x-md-check { display: flex; align-items: center; gap: 12px; min-height: 40px; cursor: pointer; }
+      .x-md-check + .x-md-check { border-top: 1px solid var(--x-line); }
+      .x-md-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--x-accent); flex: none; }
+      .x-md-check span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .x-md-check.is-done span { color: var(--x-grey); text-decoration: line-through; }
+      .x-md-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+      .x-md-pill { font: inherit; font-size: 13px; color: inherit; background: none; border: 1px solid var(--x-line); border-radius: 999px; height: 32px; padding: 0 12px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+      .x-md-pill small { font-size: 13px; color: var(--x-grey); }
+      .x-md-pill[aria-pressed="true"] { border-color: var(--x-accent); background: var(--x-accent-soft); color: var(--x-accent); }
+      .x-md-pill[aria-pressed="true"] small { color: inherit; }
+    </style>
   </head>
   <body>
     <div class="page" id="top">
@@ -2338,6 +2394,136 @@
           rec.onerror = function (ev) { if (window.toast && ev.error !== "no-speech" && ev.error !== "aborted") toast("Voice typing unavailable"); };
           try { rec.start(); if (window.toast) toast("Listening… open + to stop"); } catch (err) { rec = null; }
         }
+      })();
+    </script>
+    <script>
+      /* Minimal dashboard: greeting, month calendar, tracker. Replaces every earlier dashboard renderer. */
+      (function () {
+        var dash = document.getElementById("dash");
+        if (!window.NX || !dash) return;
+        var box = document.createElement("div");
+        box.className = "x-md"; box.id = "xmd"; dash.insertBefore(box, dash.firstChild);
+        var n0 = new Date(), vy = n0.getFullYear(), vm = n0.getMonth(), openK = null, adding = null, tmr = null;
+        var WD = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        function L(k) { var d = NX.data(); return Array.isArray(d[k]) ? d[k] : (d[k] = []); }
+        function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+        function pad(n) { return (n < 10 ? "0" : "") + n; }
+        function key(t) { return t.getFullYear() + "-" + pad(t.getMonth() + 1) + "-" + pad(t.getDate()); }
+        function today() { return key(new Date()); }
+        function ds(d) { return d.toLocaleDateString("en-GB", { weekday: "short" }) + ", " + d.getDate() + " " + d.toLocaleDateString("en-GB", { month: "short" }); }
+        function time(ms) { return new Date(ms).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); }
+        function when(ms) { var t = new Date(); t.setDate(t.getDate() + 1); var k = key(new Date(ms)); return (k === today() ? "Today" : k === key(t) ? "Tomorrow" : ds(new Date(ms))) + " · " + time(ms); }
+        function tasksOn(k) { return L("tasks").filter(function (t) { return t.due === k; }); }
+        function remsOn(k) { return L("reminders").filter(function (r) { return r.at && key(new Date(r.at)) === k; }).sort(function (a, b) { return a.at - b.at; }); }
+        function bucket(t, T) { return t.done ? "done" : !t.due ? "upcoming" : t.due < T ? "overdue" : t.due === T ? "today" : "upcoming"; }
+        function did(h, k) { return (h.dates || []).indexOf(k) > -1; }
+        function streak(h) {
+          var set = {}, n = 0, t = new Date(); t.setHours(12, 0, 0, 0);
+          (h.dates || []).forEach(function (k) { set[k] = 1; });
+          if ((h.per || 7) >= 7) { if (!set[key(t)]) t.setDate(t.getDate() - 1); while (set[key(t)]) { n++; t.setDate(t.getDate() - 1); } return n + "d"; }
+          var w = new Date(t); w.setDate(w.getDate() - (w.getDay() + 6) % 7);
+          function met(ws) { var c = 0; for (var i = 0; i < 7; i++) { var x = new Date(ws); x.setDate(x.getDate() + i); if (set[key(x)]) c++; } return c >= h.per; }
+          if (!met(w)) w.setDate(w.getDate() - 7);
+          while (met(w)) { n++; w.setDate(w.getDate() - 7); }
+          return n + "wk";
+        }
+        function plural(n, w) { return n + " " + w + (n === 1 ? "" : "s"); }
+
+        function pop(k) {
+          var rs = remsOn(k), ts = tasksOn(k), ms = Date.now(), T = today(), d = new Date(k + "T12:00");
+          var h = '<div class="x-md-pop" role="dialog" aria-label="' + esc(ds(d)) + '"><div class="x-md-pophead"><span>' + esc(ds(d)) + '</span><button class="x-md-ib" data-md-close aria-label="Close">×</button></div>';
+          if (!rs.length && !ts.length) h += '<p class="x-md-muted">Nothing on this day.</p>';
+          else h += '<ul class="x-md-list">' +
+            rs.map(function (r) { return '<li><button class="x-md-item' + (r.done ? " is-done" : "") + '" data-md-go="reminders"><i class="x-md-dot ' + (!r.done && r.at < ms ? "is-late" : "is-rem") + '"></i><span>' + esc(r.title) + "</span><small>" + time(r.at) + "</small></button></li>"; }).join("") +
+            ts.map(function (t) { return '<li><button class="x-md-item' + (t.done ? " is-done" : "") + '" data-md-go="todo:' + bucket(t, T) + '"><i class="x-md-dot ' + (!t.done && t.due < T ? "is-late" : "is-task") + '"></i><span>' + esc(t.title) + "</span><small>Task</small></button></li>"; }).join("") + "</ul>";
+          h += adding
+            ? '<form class="x-md-add" data-md-form><input name="t" placeholder="' + (adding === "task" ? "Task title" : "Reminder title") + '" aria-label="' + (adding === "task" ? "Task title" : "Reminder title") + '" autocomplete="off" required />' +
+              (adding === "reminder" ? '<input name="at" type="time" value="09:00" aria-label="Time" />' : "") + '<button class="x-md-btn" type="submit">Add</button></form>'
+            : '<div class="x-md-row"><button class="x-md-btn" data-md-add="task">+ Task</button><button class="x-md-btn" data-md-add="reminder">+ Reminder</button></div>';
+          return h + "</div>";
+        }
+
+        function render() {
+          var now = new Date(), T = key(now), ms = +now, hr = now.getHours(), tasks = L("tasks"), habits = L("habits");
+          var dueT = tasks.filter(function (t) { return t.due === T; }).sort(function (a, b) { return a.done - b.done; });
+          var openT = dueT.filter(function (t) { return !t.done; }).length, over = tasks.filter(function (t) { return !t.done && t.due && t.due < T; }).length;
+          var left = habits.filter(function (h) { return !did(h, T); }).length, parts = [];
+          if (openT) parts.push(plural(openT, "task") + " today"); if (over) parts.push(over + " overdue"); if (left) parts.push(plural(left, "habit") + " left");
+          var h = '<header class="x-md-head"><h2>Good ' + (hr < 12 ? "morning" : hr < 18 ? "afternoon" : "evening") + ", Rakesh <span>· " + esc(ds(now)) + "</span></h2><p>" + (parts.length ? parts.join(" · ") : "All clear today") + "</p></header>";
+
+          var first = new Date(vy, vm, 1), days = new Date(vy, vm + 1, 0).getDate(), off = (first.getDay() + 6) % 7;
+          h += '<div class="x-md-cols"><section class="x-md-cal" aria-label="Calendar"><div class="x-md-bar"><h3>' + esc(first.toLocaleDateString(undefined, { month: "long", year: "numeric" })) + "</h3>" +
+            '<button class="x-md-ib" data-md-nav="-1" aria-label="Previous month">‹</button><button class="x-md-ib" data-md-nav="1" aria-label="Next month">›</button><button class="x-md-btn" data-md-today>Today</button></div><div class="x-md-grid">' +
+            WD.map(function (w) { return '<span class="x-md-wd" aria-hidden="true">' + w + "</span>"; }).join("");
+          for (var i = 0; i < off; i++) h += "<span></span>";
+          for (var d = 1; d <= days; d++) {
+            var k = vy + "-" + pad(vm + 1) + "-" + pad(d), rs = remsOn(k).filter(function (r) { return !r.done; }), ts = tasksOn(k).filter(function (t) { return !t.done; });
+            var late = (k < T ? ts.length : 0) + rs.filter(function (r) { return r.at < ms; }).length, remN = rs.length - rs.filter(function (r) { return r.at < ms; }).length, taskN = k < T ? 0 : ts.length, all = rs.length + ts.length;
+            h += '<button class="x-md-day' + (k === T ? " is-today" : "") + (k === openK ? " is-open" : "") + '" data-md-day="' + k + '" aria-label="' + esc(ds(new Date(vy, vm, d)) + (all ? ", " + plural(all, "item") : "")) + '"' + (k === T ? ' aria-current="date"' : "") + '>' +
+              '<span class="x-md-num">' + d + '</span><span class="x-md-dots">' + (remN ? '<i class="is-rem"></i>' : "") + (taskN ? '<i class="is-task"></i>' : "") + (late ? '<i class="is-late"></i>' : "") + (all > 2 ? "<small>+" + (all - 2) + "</small>" : "") + "</span></button>";
+          }
+          h += "</div>" + (openK ? pop(openK) : "") + "</section>";
+
+          var next = L("reminders").filter(function (r) { return !r.done && r.at >= ms; }).sort(function (a, b) { return a.at - b.at; }).slice(0, 3);
+          h += '<aside class="x-md-side" aria-label="Tracker"><section><div class="x-md-sh"><h3>Today\u2019s tasks</h3>' + (dueT.length > 5 ? '<button class="x-md-link" data-md-go="todo:today">View all</button>' : "") + "</div>" +
+            (dueT.length ? dueT.slice(0, 5).map(function (t) { return '<label class="x-md-check' + (t.done ? " is-done" : "") + '"><input type="checkbox" data-md-task="' + esc(t.id) + '"' + (t.done ? " checked" : "") + " /><span>" + esc(t.title) + "</span></label>"; }).join("") : '<p class="x-md-muted">Nothing due today.</p>') +
+            '</section><section><div class="x-md-sh"><h3>Habits</h3></div>' +
+            (habits.length ? '<div class="x-md-pills">' + habits.map(function (x) { var on = did(x, T); return '<button class="x-md-pill" data-md-habit="' + esc(x.id) + '" aria-pressed="' + on + '" aria-label="' + esc(x.name) + (on ? ", done today" : ", not done today") + '">' + esc((x.emoji ? x.emoji + " " : "") + x.name) + "<small>🔥" + streak(x) + "</small></button>"; }).join("") + "</div>" : '<p class="x-md-muted">No habits yet.</p>') +
+            '</section><section><div class="x-md-sh"><h3>Next reminders</h3></div>' +
+            (next.length ? '<ul class="x-md-list">' + next.map(function (r) { return '<li><button class="x-md-item" data-md-go="reminders"><span>' + esc(r.title) + "</span><small>" + esc(when(r.at)) + "</small></button></li>"; }).join("") + "</ul>" : '<p class="x-md-muted">Nothing coming up.</p>') +
+            "</section></aside></div>";
+          box.innerHTML = h;
+
+          var b = openK && box.querySelector('[data-md-day="' + openK + '"]'), p = box.querySelector(".x-md-pop");
+          if (b && p) { var s = p.parentNode, x = b.offsetLeft + b.offsetWidth / 2 - p.offsetWidth / 2; p.style.left = Math.max(16, Math.min(x, s.clientWidth - p.offsetWidth - 16)) + "px"; p.style.top = b.offsetTop + b.offsetHeight + 4 + "px"; }
+        }
+        function soon() { clearTimeout(tmr); tmr = setTimeout(function () { var a = document.activeElement; if (!box.contains(a) || a.type === "checkbox" || a.tagName === "BUTTON") render(); }, 60); }
+        function go(v) {
+          var p = v.split(":"), b = document.querySelector('[data-nx="' + p[0] + '"]'); openK = null; adding = null;
+          if (b) b.click();
+          if (p[1]) { var t = document.querySelector('#nxView [data-td-tab="' + p[1] + '"]'); if (t) t.click(); }
+        }
+
+        /* take over: no earlier renderer or wrapper runs any more; NX saves refresh this view */
+        window.renderDash = function () { render(); };
+        var save = NX.save; NX.save = function () { var r = save.apply(this, arguments); soon(); return r; };
+        new MutationObserver(soon).observe(dash, { attributes: true, attributeFilter: ["hidden"] });
+        setInterval(soon, 60000);
+
+        box.addEventListener("click", function (e) {
+          var t = e.target, x; e.mdHandled = true;
+          if ((x = t.closest("[data-md-nav]"))) { vm += +x.dataset.mdNav; if (vm < 0) { vm = 11; vy--; } else if (vm > 11) { vm = 0; vy++; } openK = null; adding = null; render(); }
+          else if (t.closest("[data-md-today]")) { var n = new Date(); vy = n.getFullYear(); vm = n.getMonth(); openK = null; adding = null; render(); }
+          else if ((x = t.closest("[data-md-day]"))) { openK = openK === x.dataset.mdDay ? null : x.dataset.mdDay; adding = null; render(); }
+          else if (t.closest("[data-md-close]")) { var k = openK; openK = null; adding = null; render(); var db = box.querySelector('[data-md-day="' + k + '"]'); if (db) db.focus(); }
+          else if ((x = t.closest("[data-md-add]"))) { adding = x.dataset.mdAdd; render(); var inp = box.querySelector(".x-md-add input"); if (inp) inp.focus(); }
+          else if ((x = t.closest("[data-md-go]"))) go(x.dataset.mdGo);
+          else if ((x = t.closest("[data-md-habit]"))) {
+            var hb = L("habits").find(function (z) { return z.id === x.dataset.mdHabit; }), T = today();
+            if (hb) { var i = (hb.dates = hb.dates || []).indexOf(T); if (i > -1) hb.dates.splice(i, 1); else hb.dates.push(T); NX.save(); render(); var nb = box.querySelector('[data-md-habit="' + hb.id + '"]'); if (nb) nb.focus(); }
+          }
+        });
+        box.addEventListener("change", function (e) {
+          var id = e.target.dataset && e.target.dataset.mdTask; if (!id) return;
+          var t = L("tasks").find(function (z) { return z.id === id; }); if (!t) return;
+          t.done = e.target.checked; t.doneAt = t.done ? Date.now() : null; NX.save(); render();
+        });
+        box.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var f = e.target, title = f.elements.t.value.trim(), k = openK; if (!title || !k) return;
+          if (adding === "task") {
+            var max = -1; L("tasks").forEach(function (z, i) { max = Math.max(max, typeof z.order === "number" ? z.order : i); });
+            L("tasks").push({ id: NX.id(), title: title, due: k, priority: "Med", project: null, projectId: null, done: false, order: max + 1, subtasks: [] });
+          } else {
+            var hm = ((f.elements.at && f.elements.at.value) || "09:00").split(":"), at = new Date(k + "T00:00"); at.setHours(+hm[0], +hm[1], 0, 0);
+            L("reminders").push({ id: NX.id(), title: title, at: +at, repeat: "none", link: "", done: false, rang: null });
+          }
+          if (window.toast) toast((adding === "task" ? "Task added for " : "Reminder set for ") + ds(new Date(k + "T12:00")));
+          adding = null; NX.save(); render();
+        });
+        document.addEventListener("click", function (e) { if (openK && !e.mdHandled) { openK = null; adding = null; render(); } });
+        document.addEventListener("keydown", function (e) { if (e.key === "Escape" && openK) { openK = null; adding = null; render(); } });
+        render();
       })();
     </script>
   </body>
