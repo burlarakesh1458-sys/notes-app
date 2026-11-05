@@ -113,7 +113,7 @@
       .x-tagrow span { color: var(--x-grey); font: var(--type-caption); }
 
       .x-editor { grid-column: 3; display: flex; flex-direction: column; overflow: hidden; background: var(--note, var(--x-tile)); }
-      .x-tools { display: flex; align-items: center; gap: 4px; padding: 16px 20px 0; --x-rev: 0; }
+      .x-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding: 16px 20px 0; --x-rev: 0; } .x-tools .x-swatches { flex-wrap: wrap; } .x-tools [data-act="delete"] { color: #ef4444; }
       .x-editor:hover .x-tools, .x-tools:focus-within { --x-rev: 1; }
       .x-tools .x-ib:not(.x-back):not(.is-active), .x-tools .x-swatches { opacity: var(--x-rev); transition: opacity 0.2s, transform 0.3s var(--x-spring); }
       .x-tools .x-gap { flex: 1; }
