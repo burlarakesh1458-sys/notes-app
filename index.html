@@ -558,6 +558,50 @@
       .x-md-pill[aria-pressed="true"] { border-color: var(--x-accent); background: var(--x-accent-soft); color: var(--x-accent); }
       .x-md-pill[aria-pressed="true"] small { color: inherit; }
     </style>
+    <style>
+      /* Notes domain: segments, project notes, project side panel */
+      .x-side > [data-nx="quick"], .x-side > [data-nx="projects"] { display: none !important; }
+      .x-nbar { display: grid; gap: 12px; }
+      .x-nbar[hidden] { display: none; }
+      .x-nseg { display: flex; gap: 2px; padding: 3px; border: 1px solid var(--x-line); border-radius: var(--r-pill); background: var(--x-tile); }
+      .x-nseg button { flex: 1; min-height: 40px; padding: 0 12px; border: 0; border-radius: var(--r-pill); background: none; color: var(--x-grey); font: var(--type-label); cursor: pointer; white-space: nowrap; transition: background-color 0.2s var(--ease-out), color 0.2s var(--ease-out); }
+      .x-nseg button:hover { color: var(--text-primary); }
+      .x-nseg button[aria-selected="true"] { background: var(--x-accent-soft); color: var(--x-accent); font-weight: var(--weight-medium); }
+      .x-nseg button:focus-visible, .x-ncrumb button:focus-visible, .x-npcard:focus-visible, .x-ptab:focus-visible { outline: 2px solid var(--x-accent); outline-offset: 2px; }
+      .x-nsub { display: flex; align-items: center; gap: 8px; min-height: var(--tap); font: var(--type-label); color: var(--text-secondary); }
+      .x-nsub > :first-child { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .x-ncrumb b { color: var(--text-primary); font-weight: var(--weight-medium); }
+      .x-ncrumb button { min-height: var(--tap); padding: 0 4px; border: 0; background: none; color: var(--x-accent); font: inherit; cursor: pointer; }
+      .x-cards.x-fade { animation: x-nfade 0.2s var(--ease-out); }
+      @keyframes x-nfade { from { opacity: 0; } to { opacity: 1; } }
+      .x-npcard { width: 100%; }
+      .x-npcard h3 { margin: 0; font: var(--type-body); font-weight: var(--weight-medium); }
+      .x-npcard small { font: var(--type-caption); color: var(--text-secondary); }
+      .x-npnew { min-height: var(--tap); border: 1px dashed var(--stroke-primary); border-radius: var(--r-m); background: none; color: var(--text-primary); font: var(--type-label); cursor: pointer; }
+      .x-npnew:hover { background: var(--x-hover); }
+      .x-npform { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; border: 1px solid var(--x-line); border-radius: var(--r-m); background: var(--x-tile); }
+      .x-npform input, .x-npform select, .x-pp-add input { min-height: 40px; padding: 0 10px; border: 1px solid var(--x-line); border-radius: 10px; background: var(--fill-primary-on); color: var(--text-primary); font: var(--type-label); }
+      .x-npform input[name="name"] { flex: 1 1 100%; }
+      .x-npform input[name="emoji"] { width: 56px; text-align: center; }
+      .x-npform input[type="color"] { width: 48px; padding: 4px; }
+      .x-ptab { position: fixed; right: 0; top: 40%; z-index: 40; writing-mode: vertical-rl; padding: 16px 10px; min-width: var(--tap); border: 1px solid var(--x-line); border-right: 0; border-radius: var(--r-s) 0 0 var(--r-s); background: var(--x-tile); color: var(--text-primary); font: var(--type-label); cursor: pointer; box-shadow: var(--hark-shadow); }
+      .x-ptab[aria-expanded="true"] { color: var(--x-accent); }
+      .x-ptab[hidden], .x-ppanel[hidden], .x-app.is-nx ~ .x-ptab, .x-app.is-nx ~ .x-ppanel, .x-app.is-dash ~ .x-ptab, .x-app.is-dash ~ .x-ppanel { display: none; }
+      .x-ppanel { position: fixed; z-index: 41; top: 12px; bottom: 12px; right: 56px; width: min(300px, calc(100vw - 72px)); overflow-y: auto; padding: 16px; display: grid; align-content: start; gap: 10px; background: var(--x-tile); border: 1px solid var(--x-line); border-radius: var(--r-l); box-shadow: var(--hark-shadow); animation: x-nfade 0.2s var(--ease-out); }
+      .x-pp-head { display: flex; align-items: center; gap: 8px; }
+      .x-pp-head h2 { flex: 1; margin: 0; font: var(--type-heading); }
+      .x-ppanel h3 { margin: 6px 0 0; font: var(--type-tag); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; }
+      .x-pp-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+      .x-pp-list li { display: flex; align-items: center; gap: 8px; min-height: var(--tap); font: var(--type-label); border-bottom: 1px solid var(--x-line); }
+      .x-pp-list label { flex: 1; display: flex; align-items: center; gap: 10px; min-height: var(--tap); cursor: pointer; }
+      .x-pp-list li > span { flex: 1; }
+      .x-pp-list input { width: 18px; height: 18px; accent-color: var(--x-accent); }
+      .x-pp-list .is-done span { text-decoration: line-through; color: var(--text-secondary); }
+      .x-pp-list small { font: var(--type-caption); color: var(--text-secondary); }
+      .x-pp-list .x-pp-none { color: var(--text-secondary); border: 0; }
+      .x-pp-add input { width: 100%; }
+      @media (prefers-reduced-motion: reduce) { .x-cards.x-fade, .x-ppanel { animation: none; } .x-nseg button { transition: none; } }
+    </style>
   </head>
   <body>
     <div class="page" id="top">
@@ -1074,6 +1118,7 @@
                 tags: Array.isArray(x.tags) ? x.tags.map(String) : [],
                 color: COLORS.some(function (c) { return c[0] === x.color; }) ? x.color : "plain",
                 pinned: !!x.pinned, archived: !!x.archived, created: +x.created || t, updated: +x.updated || t,
+                quick: !!x.quick, projectId: x.projectId ? String(x.projectId) : null,
                 images: Array.isArray(x.images) ? x.images.filter(function (s) { return /^data:image\/[a-z+.-]+;base64,[A-Za-z0-9+\/=]+$/.test(s); }) : [],
                 tables: Array.isArray(x.tables) ? x.tables.filter(function (g) { return Array.isArray(g) && g.length && g.every(Array.isArray); }).map(function (g) { var w = Math.max.apply(null, g.map(function (r) { return r.length; })) || 1; return g.map(function (r) { var o = []; for (var j = 0; j < w; j++) o.push(r[j] == null ? "" : String(r[j])); return o; }); }) : []
               };
@@ -1462,7 +1507,7 @@
       (function () {
         var KEY = "nx_extra", ok = true, d = null;
         try { d = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { ok = false; }
-        function norm(x) { x = x && typeof x === "object" ? x : {}; return { quick: Array.isArray(x.quick) ? x.quick : [], projects: Array.isArray(x.projects) ? x.projects : [], tasks: Array.isArray(x.tasks) ? x.tasks : [], seeded: !!x.seeded, habits: Array.isArray(x.habits) ? x.habits : [], habitsSeeded: !!x.habitsSeeded, reminders: Array.isArray(x.reminders) ? x.reminders : [], remindersSeeded: !!x.remindersSeeded }; }
+        function norm(x) { x = x && typeof x === "object" ? x : {}; return { quick: Array.isArray(x.quick) ? x.quick : [], projects: Array.isArray(x.projects) ? x.projects : [], tasks: Array.isArray(x.tasks) ? x.tasks : [], seeded: !!x.seeded, habits: Array.isArray(x.habits) ? x.habits : [], habitsSeeded: !!x.habitsSeeded, reminders: Array.isArray(x.reminders) ? x.reminders : [], remindersSeeded: !!x.remindersSeeded, notesMigrated: !!x.notesMigrated }; }
         d = norm(d);
         function save() { if (!ok) return; try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) { ok = false; } }
         function id() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
@@ -1575,7 +1620,7 @@
           if (e.key.toLowerCase() !== "q" || e.ctrlKey || e.metaKey || e.altKey) return;
           var a = document.activeElement;
           if (a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return;
-          e.preventDefault(); show("quick"); document.getElementById("nxQ").focus();
+          e.preventDefault(); if (window.NX && NX.quickNote) return NX.quickNote(); show("quick"); document.getElementById("nxQ").focus();
         });
 
         var fi = document.createElement("input"); fi.type = "file"; fi.accept = "application/json,.json"; fi.id = "nxFile"; fi.hidden = true; document.body.appendChild(fi);
@@ -1668,7 +1713,7 @@
             '<div class="x-bento">' +
             tile("", "Due today", "today", '<span class="x-fig">' + open_.length + '</span><span class="x-hint">' + (dueT.length - open_.length) + " done</span>") +
             tile("", "Overdue", "overdue", '<span class="x-fig"' + (over.length ? ' style="color:var(--fill-system-red)"' : "") + ">" + over.length + "</span>") +
-            tile("", "Quick notes", "", '<span class="x-fig">' + D().quick.length + "</span>") +
+            tile("", "Quick notes", "", '<span class="x-fig">' + store.getNotes().filter(function (n) { return n.quick && !n.archived; }).length + "</span>") +
             tile("", "Active projects", "", '<span class="x-fig">' + act.length + '</span><div class="x-td-mp">' + act.slice(0, 4).map(function (p) {
               var ts = all.filter(function (t) { return pidOf(t) === p.id; }), dn = ts.filter(function (t) { return t.done; }).length, pc = ts.length ? Math.round(dn / ts.length * 100) : 0;
               return "<div><span>" + esc((p.emoji ? p.emoji + " " : "") + p.name) + " <small>" + pc + '%</small></span><span class="x-nx-bar" role="progressbar" aria-label="' + esc(p.name) + '" aria-valuenow="' + pc + '" aria-valuemin="0" aria-valuemax="100"><i style="width:' + pc + '%"></i></span></div>';
@@ -2096,7 +2141,7 @@
         };
         var SECTIONS = { notes: ["Notes", "notes"], todo: ["To-Do", "todo"], habits: ["Habits", "habits"], reminders: ["Reminders", "reminders"], dashboard: ["Dashboard", "dashboard"] };
         var ROWS = {
-          notes: [["all", "All notes", "all"], ["quick", "Quick Notes", "quick"], ["projects", "Projects", "projects"], ["pinned", "Pinned", "pinned"], ["archive", "Archived", "archive"]],
+          notes: [["all", "All notes", "all"], ["pinned", "Pinned", "pinned"], ["archive", "Archived", "archive"], ["tags", "Tags", "tag"]],
           todo: [["today", "Today", "today"], ["upcoming", "Upcoming", "upcoming"], ["overdue", "Overdue", "overdue"], ["done", "Done", "done"]],
           habits: [["habits", "All habits", "habits"]],
           reminders: [["upcoming", "Upcoming", "upcoming"], ["today", "Today", "clock"], ["done", "Done", "done"]],
@@ -2215,10 +2260,10 @@
           var nx = old("[data-nx].is-active"), v = typeof state === "object" ? state : null;
           if (nx) {
             var k = nx.dataset.nx;
-            if (k === "quick" || k === "projects") setSec("notes", k);
+            if (k === "quick" || k === "projects") setSec("notes", "all");
             else if (k !== cur.sec) setSec(k, ROWS[k][0][0]);
           } else if (v && v.view === "dashboard") setSec("dashboard", "");
-          else if (v) setSec("notes", v.tag ? "tag:" + v.tag : v.view === "notes" || v.view === "tags" ? "all" : v.view);
+          else if (v) setSec("notes", v.tag ? "tag:" + v.tag : v.view === "notes" ? "all" : v.view);
         }
         new MutationObserver(function () { if (!pending) { pending = true; requestAnimationFrame(sync); } })
           .observe(side, { subtree: true, attributes: true, attributeFilter: ["class"] });
@@ -2524,6 +2569,212 @@
         document.addEventListener("click", function (e) { if (openK && !e.mdHandled) { openK = null; adding = null; render(); } });
         document.addEventListener("keydown", function (e) { if (e.key === "Escape" && openK) { openK = null; adding = null; render(); } });
         render();
+      })();
+    </script>
+    <script>
+      /* Notes domain: All · Quick Notes · Projects segments on the note list; quick and project notes are ordinary notes */
+      function nxMigrate(d, saveNote, uid, now) {
+        var out = { quick: 0, project: 0, skipped: !!d.notesMigrated };
+        if (d.notesMigrated) return out;
+        d.notesMigrated = true;
+        function mk(x, extra) {
+          var text = String(x && typeof x === "object" ? (x.text == null ? "" : x.text) : x == null ? "" : x), time = +(x && x.time) || now;
+          saveNote(Object.assign({ id: uid(), title: text.replace(/\s+/g, " ").trim().slice(0, 40), body: text, tags: [], color: "plain", pinned: false, archived: false, created: time, updated: time }, extra));
+        }
+        (d.quick || []).forEach(function (q) { mk(q, { quick: true }); out.quick++; });
+        (d.projects || []).forEach(function (p) { (p.notes || []).forEach(function (n) { mk(n, { projectId: p.id }); out.project++; }); p.notes = []; });
+        d.quick = [];
+        return out;
+      }
+      (function () {
+        if (!window.NX || typeof store !== "object") return;
+        var D = NX.data, lhead = document.querySelector(".x-lhead"), seg = "all", openP = null, fadeNext = false, newOpen = false, panelOpen = false;
+        var rm = window.matchMedia("(prefers-reduced-motion: reduce)"), SEGS = [["all", "All notes"], ["quick", "Quick Notes"], ["projects", "Projects"]];
+        var PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+        function e(s) { return esc(s == null ? "" : s); }
+        function projs() { return D().projects || []; }
+        function proj(id) { return id ? projs().find(function (p) { return p.id === id; }) : null; }
+        function pname(p) { return (p.emoji || "📁") + " " + p.name; }
+        function tasksOf(id) { return (D().tasks || []).filter(function (t) { return (t.projectId || t.project) === id; }); }
+        function notesOf(id) { return store.getNotes().filter(function (n) { return n.projectId === id && !n.archived; }); }
+        function remsOf(id) {
+          var links = notesOf(id).map(function (n) { return "note:" + n.id; }).concat("project:" + id);
+          return (D().reminders || []).filter(function (r) { return !r.done && links.indexOf(r.link) >= 0; }).sort(function (a, b) { return a.at - b.at; });
+        }
+        function when2(ms) { return new Date(ms).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }); }
+        function inProject() { return state.view === "notes" && seg === "projects" && proj(openP); }
+
+        function migrate() {
+          if (D().notesMigrated) return;
+          var r = nxMigrate(D(), function (n) { store.saveNote(n, "seed"); }, uid, Date.now());
+          NX.save();
+          if (r.quick + r.project) toast("Moved " + r.quick + " quick and " + r.project + " project notes into Notes");
+        }
+
+        /* the segmented control and the bar under it */
+        var bar = document.createElement("div"); bar.className = "x-nbar"; lhead.appendChild(bar);
+        function renderBar() {
+          bar.hidden = state.view !== "notes";
+          if (bar.hidden) return;
+          var p = inProject(), lbl;
+          var h = '<div class="x-nseg" role="tablist" aria-label="Notes sections">' + SEGS.map(function (s) {
+            var on = seg === s[0];
+            return '<button type="button" role="tab" data-nseg="' + s[0] + '" aria-selected="' + on + '" tabindex="' + (on ? 0 : -1) + '">' + s[1] + "</button>";
+          }).join("") + "</div>";
+          if (seg === "quick") { lbl = "New quick note"; h += '<div class="x-nsub"><span>Quick notes, newest first</span>'; }
+          else if (p) { lbl = "New note in " + p.name; h += '<div class="x-nsub"><nav class="x-ncrumb" aria-label="Breadcrumb"><button type="button" data-ncrumb title="Back to projects">Notes</button> › <b>' + e(pname(p)) + "</b></nav>"; }
+          if (lbl) h += '<button class="x-ib x-ib--accent" type="button" data-nplus title="' + e(lbl) + '" aria-label="' + e(lbl) + '">' + PLUS + "</button></div>";
+          bar.innerHTML = h;
+        }
+        function gridHTML() {
+          var h = newOpen
+            ? '<form class="x-npform" id="nxpNew"><input name="name" placeholder="Project name" required aria-label="Project name" /><input name="emoji" placeholder="📁" maxlength="4" aria-label="Emoji" /><input name="color" type="color" value="#4f7cff" aria-label="Colour" /><select name="status" aria-label="Status"><option>Active</option><option>Paused</option><option>Done</option></select><button class="btn" type="submit">Add</button><button class="btn" type="button" data-npnew>Cancel</button></form>'
+            : '<button class="x-npnew" type="button" data-npnew>+ New project</button>';
+          return h + projs().map(function (p) {
+            var ts = tasksOf(p.id), dn = ts.filter(function (t) { return t.done; }).length, pc = ts.length ? Math.round(dn / ts.length * 100) : 0;
+            return '<button class="x-nx-card x-npcard" type="button" data-nopen="' + e(p.id) + '" style="--c:' + e(p.color || "var(--stroke-primary)") + '"><h3>' + e(pname(p)) + "</h3><small>" + e(p.status || "Active") + (p.due ? " · due " + e(p.due) : "") + " · " + notesOf(p.id).length + " notes · " + dn + "/" + ts.length + ' to-dos</small><span class="x-nx-bar" role="progressbar" aria-label="Progress" aria-valuenow="' + pc + '" aria-valuemin="0" aria-valuemax="100"><i style="width:' + pc + '%"></i></span></button>';
+          }).join("");
+        }
+
+        /* list filtering and rendering */
+        var baseVis = window.visible;
+        window.visible = function () {
+          var l = baseVis();
+          if (state.view !== "notes") return l;
+          if (seg === "quick") return l.filter(function (n) { return n.quick; });
+          if (seg === "projects" && openP) return l.filter(function (n) { return n.projectId === openP; });
+          return l;
+        };
+        var baseList = window.renderList;
+        window.renderList = function () {
+          migrate();
+          if (openP && !proj(openP)) openP = null;
+          renderBar();
+          if (state.view === "notes" && seg === "projects" && !openP && !state.q) { renderChips(); cardsEl.innerHTML = gridHTML(); }
+          else baseList.apply(this, arguments);
+          if (fadeNext && !rm.matches) { cardsEl.classList.remove("x-fade"); void cardsEl.offsetWidth; cardsEl.classList.add("x-fade"); }
+          fadeNext = false;
+          renderPanel();
+        };
+        function goSeg(s, pid) {
+          NX.hide(); seg = s; openP = pid || null; fadeNext = true; newOpen = false;
+          if (state.view !== "notes") setView("notes"); else renderList();
+        }
+        function create(extra) {
+          NX.hide();
+          if (state.view !== "notes") setView("notes");
+          var a = document.activeElement; if (a && editor.contains(a)) a.blur();
+          flush(); editor.innerHTML = "";
+          state.q = ""; qIn.value = "";
+          var t = Date.now(), n = Object.assign({ id: uid(), title: "", body: "", tags: state.tag ? [state.tag] : [], color: "plain", pinned: false, archived: false, created: t, updated: t }, extra);
+          state.sel = n.id; store.saveNote(n, "new"); select(n.id, true);
+        }
+        NX.quickNote = function () { seg = "quick"; openP = null; fadeNext = true; create({ quick: true }); };
+        var baseShow = NX.show;
+        NX.show = function (m) { if (m === "quick") return NX.quickNote(); if (m === "projects") return goSeg("projects", null); return baseShow.apply(this, arguments); };
+        var baseNew = window.newNote;
+        window.newNote = function () {
+          if (state.view === "notes" && seg === "quick") return create({ quick: true });
+          if (inProject()) return create({ projectId: openP });
+          if (state.view === "notes" && seg === "projects") { seg = "all"; fadeNext = true; }
+          var a = document.activeElement; if (a && editor.contains(a)) a.blur();
+          flush(); editor.innerHTML = ""; baseNew();
+        };
+
+        /* the project side tab: To-dos · Reminders */
+        var main = document.querySelector(".main"), tab = document.createElement("button"), panel = document.createElement("aside");
+        tab.type = "button"; tab.className = "x-ptab"; tab.textContent = "To-dos · Reminders"; tab.hidden = true; tab.setAttribute("aria-controls", "nxpPanel");
+        panel.className = "x-ppanel"; panel.id = "nxpPanel"; panel.hidden = true; panel.setAttribute("aria-label", "Project to-dos and reminders");
+        main.appendChild(tab); main.appendChild(panel);
+        function renderPanel() {
+          var p = inProject();
+          tab.hidden = !p; panel.hidden = !(p && panelOpen); tab.setAttribute("aria-expanded", String(!!(p && panelOpen)));
+          if (!p || !panelOpen) return;
+          var ts = tasksOf(p.id), rs = remsOf(p.id);
+          panel.innerHTML = '<div class="x-pp-head"><h2>' + e(pname(p)) + '</h2><button class="x-ib" type="button" data-pclose title="Close" aria-label="Close panel">×</button></div>' +
+            '<h3>To-dos</h3><ul class="x-pp-list">' + (ts.map(function (t) {
+              return '<li class="' + (t.done ? "is-done" : "") + '"><label><input type="checkbox" data-ptog="' + e(t.id) + '"' + (t.done ? " checked" : "") + " /><span>" + e(t.title) + "</span></label>" + (t.due ? "<small>" + e(t.due) + "</small>" : "") + "</li>";
+            }).join("") || '<li class="x-pp-none">No to-dos yet</li>') + "</ul>" +
+            '<form class="x-pp-add" id="nxpTask"><input name="title" placeholder="Add a to-do and press Enter" required aria-label="New to-do" autocomplete="off" /></form>' +
+            '<h3>Reminders</h3><ul class="x-pp-list">' + (rs.map(function (r) { return "<li><span>" + e(r.title) + "</span><small>" + e(when2(r.at)) + "</small></li>"; }).join("") || '<li class="x-pp-none">No reminders for this project</li>') + "</ul>";
+        }
+        panel.addEventListener("change", function (ev) {
+          var id = ev.target.dataset.ptog, t = id && (D().tasks || []).find(function (k) { return k.id === id; });
+          if (!t) return;
+          t.done = ev.target.checked; t.doneAt = t.done ? Date.now() : null; NX.save(); renderPanel(); renderList();
+        });
+        panel.addEventListener("submit", function (ev) {
+          ev.preventDefault();
+          var v = ev.target.elements.title.value.trim(), ts = D().tasks || (D().tasks = []);
+          if (!v || !openP) return;
+          var max = ts.reduce(function (m, k) { return Math.max(m, +k.order || 0); }, 0);
+          ts.push({ id: NX.id(), title: v, due: "", priority: "Med", project: openP, projectId: openP, done: false, order: max + 1, subtasks: [] });
+          NX.save(); renderPanel(); renderList(); var i = panel.querySelector("#nxpTask input"); if (i) i.focus();
+        });
+
+        /* new project form */
+        cardsEl.addEventListener("submit", function (ev) {
+          if (ev.target.id !== "nxpNew") return;
+          ev.preventDefault();
+          var f = ev.target, v = function (k) { return f.elements[k].value.trim(); };
+          if (!v("name")) return;
+          projs().push({ id: NX.id(), name: v("name"), emoji: v("emoji") || "📁", color: v("color") || "#4f7cff", due: "", status: v("status") || "Active", notes: [] });
+          NX.save(); newOpen = false; renderList(); toast("Project added");
+        });
+
+        /* the card ⋯ menu: Move to project…, Remove from project */
+        var menu = document.querySelector('.x-menu[role="menu"]');
+        function closeMenu() { document.body.click(); }
+        function fit() { var r = menu.getBoundingClientRect(); if (r.bottom > innerHeight - 8) menu.style.top = Math.max(8, innerHeight - 8 - r.height) + "px"; }
+        cardsEl.addEventListener("click", function (ev) {
+          var b = ev.target.closest("[data-cmore]"), n = b && store.getNote(b.dataset.cmore);
+          if (!n || !menu || menu.hidden || menu.dataset.note !== n.id) return;
+          var h = '<button role="menuitem" data-nxp-move>Move to project…</button>' + (n.projectId ? '<button role="menuitem" data-nxp-out>Remove from project</button>' : "");
+          var del = menu.querySelector(".is-danger");
+          if (del) del.insertAdjacentHTML("beforebegin", h); else menu.insertAdjacentHTML("beforeend", h);
+          fit();
+        });
+        function setProject(id, pid) {
+          if (state.sel === id) flush();
+          var n = store.getNote(id); if (!n) return;
+          n.projectId = pid || null; store.saveNote(n, "move");
+          toast(pid ? "Moved to " + pname(proj(pid)) : "Removed from project");
+        }
+        if (menu) menu.addEventListener("click", function (ev) {
+          var t = ev.target, x, id = menu.dataset.note, n = store.getNote(id);
+          if (!n) return;
+          if (t.closest("[data-nxp-move]")) {
+            menu.innerHTML = projs().length ? projs().map(function (p) {
+              return '<button role="menuitemradio" data-nxp-to="' + e(p.id) + '" aria-checked="' + (n.projectId === p.id) + '">' + e(pname(p)) + "</button>";
+            }).join("") : '<button role="menuitem" data-nxp-newp>No projects yet · Create one</button>';
+            fit(); var f = menu.querySelector("button"); if (f) f.focus();
+          } else if ((x = t.closest("[data-nxp-to]"))) { closeMenu(); setProject(id, x.dataset.nxpTo); }
+          else if (t.closest("[data-nxp-out]")) { closeMenu(); setProject(id, null); }
+          else if (t.closest("[data-nxp-newp]")) { closeMenu(); newOpen = true; goSeg("projects", null); newOpen = true; renderList(); }
+        });
+
+        /* clicks: segments, +, breadcrumb, project cards, side tab; old Quick Notes/Projects buttons redirect here */
+        document.addEventListener("click", function (ev) {
+          var t = ev.target, o = t.closest('.x-side > [data-nx="quick"], .x-side > [data-nx="projects"]');
+          if (t.closest('[data-sb-item="all"]')) { seg = "all"; openP = null; }
+          if (o) { ev.stopPropagation(); ev.preventDefault(); if (o.dataset.nx === "quick") NX.quickNote(); else goSeg("projects", null); }
+        }, true);
+        document.addEventListener("click", function (ev) {
+          var t = ev.target, x;
+          if ((x = t.closest("[data-nseg]"))) { if (x.dataset.nseg !== seg || openP) goSeg(x.dataset.nseg, null); }
+          else if (t.closest("[data-nplus]")) { if (seg === "quick") create({ quick: true }); else if (inProject()) create({ projectId: openP }); }
+          else if (t.closest("[data-ncrumb]")) goSeg("projects", null);
+          else if ((x = t.closest("[data-nopen]"))) goSeg("projects", x.dataset.nopen);
+          else if (t.closest("[data-npnew]")) { newOpen = !newOpen; renderList(); var i = cardsEl.querySelector('#nxpNew [name="name"]'); if (i) i.focus(); }
+          else if (t === tab) { panelOpen = !panelOpen; renderPanel(); var f = panel.querySelector("input"); if (panelOpen && f) f.focus(); }
+          else if (t.closest("[data-pclose]")) { panelOpen = false; renderPanel(); tab.focus(); }
+        });
+        bar.addEventListener("keydown", function (ev) {
+          var x = ev.target.closest("[data-nseg]"); if (!x || (ev.key !== "ArrowRight" && ev.key !== "ArrowLeft")) return;
+          var i = SEGS.findIndex(function (s) { return s[0] === x.dataset.nseg; }), nx = SEGS[(i + (ev.key === "ArrowRight" ? 1 : 2)) % 3][0];
+          goSeg(nx, null); var b = bar.querySelector('[data-nseg="' + nx + '"]'); if (b) b.focus();
+        });
+        renderList();
       })();
     </script>
   </body>
