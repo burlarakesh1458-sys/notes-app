@@ -13,7 +13,7 @@
         --x-bg: light-dark(#f6f6f7, #0e0e10);
         --x-tile: light-dark(#ffffff, #18181b);
         --x-line: light-dark(#ececef, #26262a);
-        --x-grey: light-dark(#71717a, #a1a1aa);
+        --x-grey: light-dark(#63636b, #a1a1aa);
         --x-hover: light-dark(#f1f1f3, #232327);
         --x-accent: light-dark(#2563eb, #60a5fa);
         --x-accent-soft: light-dark(#eef3fe, #172235);
@@ -176,7 +176,7 @@
         transition: transform 0.4s var(--x-spring), opacity 0.25s;
       }
       .x-toast.is-on { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
-      .x-toast button { min-height: 36px; padding: 0 14px; border: 0; border-radius: var(--r-pill); background: color-mix(in srgb, currentColor 14%, transparent); color: inherit; font: var(--type-label); cursor: pointer; }
+      .x-toast button { min-height: 48px; min-width: 48px; padding: 0 14px; border: 0; border-radius: var(--r-pill); background: color-mix(in srgb, currentColor 14%, transparent); color: inherit; font: var(--type-label); cursor: pointer; }
       .x-toast button[hidden] { display: none; }
       .x-toast::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--x-accent); transform-origin: left; transform: scaleX(0); }
       .x-toast.is-timed::after { animation: x-bar 5s linear both; }
@@ -430,6 +430,47 @@
       .x-hb-key i { height: 10px; border-radius: 3px; margin-right: 6px; }
       @media (prefers-reduced-motion: reduce) { .x-hb-ring { animation: none !important; transition: none !important; } }
     </style>
+    <style>
+      /* Sidebar nav: section switcher + rows; the old icon buttons stay in the DOM, hidden on desktop */
+      .x-sb { display: none; }
+      @media (min-width: 761px) {
+        .x-app { grid-template-columns: 232px 360px minmax(0, 1fr); }
+        .x-side { align-items: stretch; padding: 8px; gap: 0; }
+        .x-side > .x-ib, .x-side > .x-gap { display: none; }
+        .x-sb { --x-sb-hover: light-dark(#0000000a, #ffffff0f); --x-sb-on: color-mix(in srgb, var(--x-accent) 10%, transparent); display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; font: 400 14px/1.3 var(--sans); color: var(--text-primary); }
+      }
+      .x-sb svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+      .x-sb button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+      .x-sb-top { display: flex; align-items: center; gap: 8px; height: 40px; }
+      .x-sb-brand { display: flex; align-items: center; gap: 8px; flex: 1; height: 40px; padding: 0 8px; border-radius: 12px; font-size: 15px !important; font-weight: 600 !important; }
+      .x-sb-logo { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 8px; background: var(--x-accent); color: light-dark(#fff, #0e0e10); }
+      .x-sb-logo svg { width: 14px; height: 14px; }
+      .x-sb-ic { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 12px; color: var(--x-grey) !important; }
+      .x-sb button:hover, .x-sb-brand:hover { background: var(--x-sb-hover); }
+      .x-sb button:focus-visible { outline: 2px solid var(--x-accent); outline-offset: -2px; }
+      .x-sb-sw { position: relative; }
+      .x-sb-swbtn { display: flex; align-items: center; gap: 8px; width: 100%; height: 40px; padding: 0 8px; border-radius: 12px; border: 1px solid var(--x-line) !important; font-weight: 500 !important; }
+      .x-sb-swbtn span { flex: 1; text-align: left; }
+      .x-sb-swbtn .x-sb-chev { color: var(--x-grey); transition: transform 200ms cubic-bezier(.2,.8,.2,1); }
+      .x-sb-swbtn[aria-expanded="true"] .x-sb-chev { transform: rotate(180deg); }
+      .x-sb-menu { position: absolute; z-index: 30; top: 44px; left: 0; right: 0; padding: 4px; display: grid; gap: 0; background: var(--x-tile); border: 1px solid var(--x-line); border-radius: 12px; box-shadow: 0 8px 24px #0000001a; }
+      .x-sb-menu[hidden] { display: none; }
+      .x-sb-row { display: flex; align-items: center; gap: 8px; width: 100%; height: 32px; padding: 0 8px; border-radius: 12px; text-align: left; }
+      .x-sb-row span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .x-sb-row small { font-size: 13px; color: var(--x-grey); }
+      .x-sb-row svg { color: var(--x-grey); }
+      .x-sb .x-sb-row.is-active { background: var(--x-sb-on); color: var(--x-accent); }
+      .x-sb-row.is-active svg { color: var(--x-accent); }
+      .x-sb-body { display: grid; gap: 0; overflow-y: auto; min-height: 0; flex: 1; align-content: start; }
+      .x-sb-body.is-in { animation: x-sb-in 200ms cubic-bezier(.2,.8,.2,1); }
+      @keyframes x-sb-in { from { opacity: 0; transform: translateY(4px); } }
+      .x-sb-label { margin: 8px 0 0; padding: 8px 8px 4px; font-size: 13px; font-weight: 500; color: var(--x-grey); border-top: 1px solid var(--x-line); }
+      .x-sb-foot { display: flex; align-items: center; gap: 8px; padding-top: 8px; border-top: 1px solid var(--x-line); }
+      .x-sb-foot span { flex: 1; font-size: 13px; color: var(--x-grey); }
+      .x-side .x-sb-foot [data-act="theme"] { opacity: 1; width: 32px; height: 32px; border-radius: 12px; }
+      .x-side .x-sb-foot [data-act="theme"] svg { width: 16px; height: 16px; }
+      @media (prefers-reduced-motion: reduce) { .x-sb-body.is-in { animation: none; } .x-sb-swbtn .x-sb-chev { transition: none; } }
+    </style>
   </head>
   <body>
     <div class="page" id="top">
@@ -501,7 +542,7 @@
               <nav class="x-flinks" aria-label="Footer">
                 <button class="x-flink" data-view="notes">Notes</button>·
                 <button class="x-flink" data-view="dashboard">Dashboard</button>·
-                                <button class="x-flink" data-act="shortcuts">Shortcuts</button>
+                <button class="x-flink" data-act="shortcuts">Shortcuts</button>
               </nav>
               <div class="x-art" id="footer-art" aria-hidden="true"></div>
             </footer>
@@ -637,7 +678,6 @@
         var names = { notes: "Notes", pinned: "Pinned", archive: "Archive", tags: "Tags", dashboard: "Dashboard" };
         var h = '<span class="x-viewname">' + names[state.view] + "</span>";
         if (state.tag) h += '<button class="x-chip is-active" data-clear-tag title="Clear tag filter">#' + esc(state.tag) + " ×</button>";
-        
         chipsEl.innerHTML = h;
       }
       function renderList() {
@@ -1940,12 +1980,167 @@
         document.addEventListener("click", function (e) { if (!menu.hidden && !menu.contains(e.target)) closeMenus(); });
       })();
     </script>
-  <style id="hotfix-toolbar2">
-.x-tools{flex-wrap:wrap!important;row-gap:8px!important;min-width:0!important}
-.x-tools .x-swatches{flex-wrap:wrap!important}
-.x-tools>*{flex-shrink:1;min-width:0}
-.x-tpill{white-space:nowrap;margin-left:auto}
-.x-tools [data-act="delete"]{color:#e5484d!important}
-[data-act="export"],[data-act="import"],[data-act="export-md"],[data-act="exportmd"],[data-act="md"]{display:none!important}
-</style><script id="hotfix-noexport">(function(){function z(){document.querySelectorAll('button,a,span,p,div.banner,[class*="banner"],[class*="foot"] a').forEach(function(e){var t=(e.textContent||'').trim();if(e.children.length<=1&&/^(Export|Import|Export JSON|Import JSON|Export \u00b7 Import|Export · Import)$/i.test(t))e.style.display='none';if(/Preview mode/i.test(t)&&t.length<160)e.style.display='none';});}document.addEventListener('DOMContentLoaded',z);setTimeout(z,300);new MutationObserver(function(){clearTimeout(window.__zt);window.__zt=setTimeout(z,50)}).observe(document.documentElement,{childList:true,subtree:true});})();</script></body>
+    <script>
+      /* Sidebar nav: drives the existing views by clicking the old (hidden) sidebar buttons */
+      (function () {
+        var side = document.querySelector(".x-side");
+        if (!side) return;
+        function P(d) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + d + "</svg>"; }
+        var I = {
+          notes: P('<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M16 13H8M16 17H8M10 9H8"/>'),
+          all: P('<path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/>'),
+          quick: P('<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>'),
+          projects: P('<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>'),
+          pinned: P('<path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>'),
+          archive: P('<rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8M10 12h4"/>'),
+          tag: P('<path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/>'),
+          todo: P('<path d="m3 17 2 2 4-4M3 7l2 2 4-4M13 6h8M13 12h8M13 18h8"/>'),
+          today: P('<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18m-12 6 2 2 4-4"/>'),
+          upcoming: P('<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16h6m-2-2 2 2-2 2"/>'),
+          overdue: P('<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>'),
+          done: P('<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>'),
+          habits: P('<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>'),
+          reminders: P('<path d="M10.27 21a2 2 0 0 0 3.46 0"/><path d="M3.26 15.33A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.67C19.41 13.96 18 12.5 18 8A6 6 0 0 0 6 8c0 4.5-1.41 5.96-2.74 7.33"/>'),
+          clock: P('<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'),
+          dashboard: P('<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>'),
+          chev: P('<path d="m6 9 6 6 6-6"/>'),
+          plus: P('<path d="M5 12h14M12 5v14"/>'),
+          gear: P('<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>')
+        };
+        var SECTIONS = { notes: ["Notes", "notes"], todo: ["To-Do", "todo"], habits: ["Habits", "habits"], reminders: ["Reminders", "reminders"], dashboard: ["Dashboard", "dashboard"] };
+        var ROWS = {
+          notes: [["all", "All notes", "all"], ["quick", "Quick Notes", "quick"], ["projects", "Projects", "projects"], ["pinned", "Pinned", "pinned"], ["archive", "Archived", "archive"]],
+          todo: [["today", "Today", "today"], ["upcoming", "Upcoming", "upcoming"], ["overdue", "Overdue", "overdue"], ["done", "Done", "done"]],
+          habits: [["habits", "All habits", "habits"]],
+          reminders: [["upcoming", "Upcoming", "upcoming"], ["today", "Today", "clock"], ["done", "Done", "done"]],
+          dashboard: [["notes", "Notes", "notes"], ["todo", "To-Do", "todo"], ["habits", "Habits", "habits"], ["reminders", "Reminders", "reminders"]]
+        };
+        var cur = { sec: "dashboard", item: "" };
+
+        function old(sel) { return side.querySelector(":scope > " + sel); }
+        function clickOld(sel) { var b = old(sel); if (b) b.click(); }
+        function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+        function tags() {
+          if (typeof store !== "object" || !store.getNotes) return [];
+          var c = {};
+          store.getNotes().forEach(function (n) { if (!n.archived) (n.tags || []).forEach(function (t) { c[t] = (c[t] || 0) + 1; }); });
+          return Object.keys(c).sort().map(function (t) { return [t, c[t]]; });
+        }
+
+        var sb = document.createElement("div");
+        sb.className = "x-sb";
+        sb.innerHTML =
+          '<div class="x-sb-top"><button class="x-sb-brand" data-sb-home aria-label="Notes, open Dashboard"><span class="x-sb-logo">' + I.notes + "</span>Notes</button>" +
+          '<button class="x-sb-ic" data-sb-new title="New note (Ctrl+N)" aria-label="New note">' + I.plus + "</button></div>" +
+          '<div class="x-sb-sw"><button class="x-sb-swbtn" data-sb-sw aria-haspopup="menu" aria-expanded="false"></button>' +
+          '<div class="x-sb-menu" role="menu" hidden>' + ["notes", "todo", "habits", "reminders"].map(function (k) {
+            return '<button class="x-sb-row" role="menuitem" data-sb-sec="' + k + '">' + I[SECTIONS[k][1]] + "<span>" + SECTIONS[k][0] + "</span></button>";
+          }).join("") + "</div></div>" +
+          '<nav class="x-sb-body" aria-label="Section"></nav>' +
+          '<div class="x-sb-foot"><span>Theme</span><button class="x-sb-ic" data-sb-gear title="Settings and shortcuts" aria-label="Settings and shortcuts">' + I.gear + "</button></div>";
+        side.insertBefore(sb, side.firstChild);
+        var body = sb.querySelector(".x-sb-body"), swBtn = sb.querySelector("[data-sb-sw]"), menu = sb.querySelector(".x-sb-menu"), foot = sb.querySelector(".x-sb-foot");
+
+        /* theme control: in the footer on desktop, back in the old row on phones */
+        var thBtn = side.querySelector('[data-act="theme"]'), thHome = thBtn && thBtn.nextSibling, mq = window.matchMedia("(max-width: 760px)");
+        function placeTheme() { if (!thBtn) return; if (mq.matches) side.insertBefore(thBtn, thHome); else foot.insertBefore(thBtn, foot.lastChild); }
+        placeTheme();
+        if (mq.addEventListener) mq.addEventListener("change", placeTheme);
+
+        function renderBody(animate) {
+          var s = SECTIONS[cur.sec];
+          swBtn.innerHTML = I[s[1]] + "<span>" + s[0] + '</span><i class="x-sb-chev">' + I.chev + "</i>";
+          var h = ROWS[cur.sec].map(function (r) {
+            return '<button class="x-sb-row" data-sb-item="' + r[0] + '">' + I[r[2]] + "<span>" + r[1] + "</span></button>";
+          }).join("");
+          if (cur.sec === "notes") {
+            var t = tags();
+            if (t.length) h += '<p class="x-sb-label">Tags</p>' + t.map(function (x) {
+              return '<button class="x-sb-row" data-sb-item="tag:' + esc(x[0]) + '">' + I.tag + "<span>" + esc(x[0]) + "</span><small>" + x[1] + "</small></button>";
+            }).join("");
+          }
+          body.innerHTML = h;
+          mark();
+          if (animate) { body.classList.remove("is-in"); void body.offsetWidth; body.classList.add("is-in"); }
+        }
+        function mark() {
+          body.querySelectorAll("[data-sb-item]").forEach(function (b) {
+            var on = b.dataset.sbItem === cur.item;
+            b.classList.toggle("is-active", on);
+            if (on) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+          });
+        }
+        function setSec(sec, item) {
+          var changed = sec !== cur.sec;
+          cur.sec = sec; cur.item = item || "";
+          if (changed) renderBody(true); else mark();
+        }
+
+        function go(sec, item) {
+          if (sec === "dashboard" && !item) { clickOld('[data-view="dashboard"]'); setSec("dashboard", ""); return; }
+          if (sec === "dashboard") return go(item, ROWS[item][0][0]);
+          if (sec === "notes") {
+            if (item === "quick" || item === "projects") clickOld('[data-nx="' + item + '"]');
+            else if (item.indexOf("tag:") === 0) {
+              clickOld('[data-view="notes"]');
+              var t = document.createElement("button"); t.hidden = true; t.dataset.tag = item.slice(4);
+              side.appendChild(t); t.click(); t.remove();
+            } else clickOld('[data-view="' + (item === "all" ? "notes" : item) + '"]');
+          } else if (sec === "todo") {
+            clickOld('[data-nx="todo"]');
+            var tab = document.querySelector('#nxView [data-td-tab="' + item + '"]'); if (tab) tab.click();
+          } else if (sec === "habits") clickOld('[data-nx="habits"]');
+          else if (sec === "reminders") {
+            clickOld('[data-nx="reminders"]');
+            var label = { upcoming: "Upcoming", today: "Today", done: "Done" }[item], hit = null;
+            document.querySelectorAll("#nxView .x-rm-group h3").forEach(function (h) { if (!hit && h.textContent.indexOf(label) === 0) hit = h; });
+            if (hit) hit.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+            else if (window.toast) toast("No " + label.toLowerCase() + " reminders");
+          }
+          setSec(sec, item);
+        }
+
+        function openMenu(open) { menu.hidden = !open; swBtn.setAttribute("aria-expanded", open); if (open) { var f = menu.querySelector("button"); if (f) f.focus(); } }
+        sb.addEventListener("click", function (e) {
+          var b = e.target.closest("button");
+          if (!b) return;
+          if (b.hasAttribute("data-sb-home")) go("dashboard");
+          else if (b.hasAttribute("data-sb-new")) clickOld(".x-new");
+          else if (b.hasAttribute("data-sb-gear")) { var s = document.querySelector('[data-act="shortcuts"]'); if (s) s.click(); }
+          else if (b.hasAttribute("data-sb-sw")) { e.stopPropagation(); openMenu(menu.hidden); }
+          else if (b.dataset.sbSec) { openMenu(false); swBtn.focus(); go(b.dataset.sbSec, ROWS[b.dataset.sbSec][0][0]); }
+          else if (b.dataset.sbItem) go(cur.sec, b.dataset.sbItem);
+        });
+        document.addEventListener("click", function (e) { if (!menu.hidden && !e.target.closest(".x-sb-sw")) openMenu(false); });
+        menu.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") { openMenu(false); swBtn.focus(); }
+          if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+            e.preventDefault();
+            var bs = [].slice.call(menu.querySelectorAll("button")), i = bs.indexOf(document.activeElement);
+            bs[(i + (e.key === "ArrowDown" ? 1 : bs.length - 1)) % bs.length].focus();
+          }
+        });
+
+        /* follow navigation made elsewhere (keyboard shortcuts, dashboard tiles, footer links) */
+        var pending = false;
+        function sync() {
+          pending = false;
+          var nx = old("[data-nx].is-active"), v = typeof state === "object" ? state : null;
+          if (nx) {
+            var k = nx.dataset.nx;
+            if (k === "quick" || k === "projects") setSec("notes", k);
+            else if (k !== cur.sec) setSec(k, ROWS[k][0][0]);
+          } else if (v && v.view === "dashboard") setSec("dashboard", "");
+          else if (v) setSec("notes", v.tag ? "tag:" + v.tag : v.view === "notes" || v.view === "tags" ? "all" : v.view);
+        }
+        new MutationObserver(function () { if (!pending) { pending = true; requestAnimationFrame(sync); } })
+          .observe(side, { subtree: true, attributes: true, attributeFilter: ["class"] });
+        if (typeof store === "object" && store.subscribe) store.subscribe(function () { if (cur.sec === "notes") renderBody(false); });
+
+        /* open on the Dashboard */
+        renderBody(false);
+        go("dashboard");
+      })();
+    </script>
+  </body>
 </html>
