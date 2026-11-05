@@ -471,6 +471,37 @@
       .x-side .x-sb-foot [data-act="theme"] svg { width: 16px; height: 16px; }
       @media (prefers-reduced-motion: reduce) { .x-sb-body.is-in { animation: none; } .x-sb-swbtn .x-sb-chev { transition: none; } }
     </style>
+    <style>
+      /* + insert menu replaces the editor toolbar */
+      .x-editor { position: relative; }
+      .x-editor .x-tools { display: none !important; }
+      .x-editor .x-title { padding-right: 48px; }
+      .x-plus, .x-pback { position: absolute; z-index: 5; top: 16px; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--x-line); background: var(--x-tile); color: var(--text-primary); display: grid; place-items: center; padding: 0; cursor: pointer; transition: transform var(--dur-quick) var(--ease-out), background var(--dur-quick); }
+      .x-plus { right: 16px; }
+      .x-plus::before, .x-pback::before { content: ""; position: absolute; inset: -4px; }
+      .x-plus:hover, .x-pback:hover { background: var(--x-hover, var(--fill-tertiary)); }
+      .x-plus svg, .x-pback svg { width: 18px; height: 18px; }
+      .x-plus[aria-expanded="true"] { transform: rotate(45deg); }
+      .x-pback { left: 12px; display: none; }
+      @media (max-width: 760px) { .x-pback { display: grid; } .x-plus { right: 12px; } .x-editor .x-ed { padding-top: 64px; } }
+      .x-pm { position: fixed; z-index: 80; min-width: 240px; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; padding: 6px; background: var(--x-tile); color: var(--text-primary); border: 1px solid var(--x-line); border-radius: 12px; box-shadow: 0 8px 24px light-dark(#0000001a, transparent); transform-origin: top right; opacity: 0; transform: scale(0.95); transition: opacity 180ms var(--ease-out), transform 180ms var(--ease-out); }
+      :root[data-theme="dark"] .x-pm, :root[data-theme="black"] .x-pm { box-shadow: none; }
+      .x-pm.is-open { opacity: 1; transform: none; }
+      .x-pm[hidden] { display: none; }
+      .x-pm-h { margin: 0; padding: 8px 10px 4px; font: var(--type-caption); color: var(--x-grey, var(--text-secondary)); }
+      .x-pm-i { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 40px; padding: 0 10px; border: 0; border-radius: 8px; background: none; color: inherit; font: var(--type-label); text-align: left; cursor: pointer; }
+      .x-pm-i svg { width: 16px; height: 16px; flex: none; }
+      .x-pm-i:hover, .x-pm-i:focus-visible, .x-pm-sw:focus-visible { background: var(--x-hover, var(--fill-tertiary)); outline: none; }
+      .x-pm-i.is-danger { color: var(--fill-system-red); }
+      .x-pm-row { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 10px; font: var(--type-label); }
+      .x-pm-row svg { width: 16px; height: 16px; flex: none; }
+      .x-pm-sws { display: flex; gap: 2px; margin-left: auto; }
+      .x-pm-sw { width: 28px; height: 32px; border: 0; border-radius: 8px; background: none; padding: 0; display: grid; place-items: center; cursor: pointer; }
+      .x-pm-sw i { width: 16px; height: 16px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text-primary) 14%, transparent); }
+      .x-pm-sw[aria-checked="true"] i { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text-primary) 14%, transparent), 0 0 0 2px var(--x-tile), 0 0 0 3.5px var(--x-accent, var(--text-primary)); }
+      .x-pm-div { height: 1px; margin: 6px 4px; background: var(--x-line); }
+      @media (prefers-reduced-motion: reduce) { .x-pm, .x-plus { transition: none; } }
+    </style>
   </head>
   <body>
     <div class="page" id="top">
@@ -2140,6 +2171,173 @@
         /* open on the Dashboard */
         renderBody(false);
         go("dashboard");
+      })();
+    </script>
+    <script>
+      /* + insert menu: replaces the editor toolbar, driving its hidden buttons */
+      (function () {
+        var ed = document.getElementById("editor");
+        if (!ed) return;
+        var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+        var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        function I(p) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + "</svg>"; }
+        var IC = {
+          plus: I('<path d="M5 12h14"/><path d="M12 5v14"/>'),
+          back: I('<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>'),
+          todo: I('<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/>'),
+          img: I('<rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>'),
+          table: I('<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M12 3v18"/>'),
+          file: I('<path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>'),
+          colour: I('<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>'),
+          improve: I('<path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/>'),
+          ask: I('<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>'),
+          mic: I('<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/>'),
+          pin: I('<path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>'),
+          archive: I('<rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/>'),
+          trash: I('<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/>')
+        };
+        var menu = document.createElement("div");
+        menu.className = "x-pm"; menu.id = "xPlusMenu"; menu.setAttribute("role", "menu"); menu.setAttribute("aria-label", "Insert and note actions"); menu.hidden = true;
+        document.body.appendChild(menu);
+        var plus = null, fromSlash = false, caret = null, rec = null, closeT = 0;
+        function q(s) { return ed.querySelector(s); }
+        function body() { return document.getElementById("body"); }
+
+        function mount() {
+          var tools = q(".x-tools");
+          if (!tools) { plus = null; if (!menu.hidden) close(false); return; }
+          if (q(".x-plus")) return;
+          if (!menu.hidden) close(false);
+          plus = document.createElement("button");
+          plus.type = "button"; plus.className = "x-plus"; plus.innerHTML = IC.plus;
+          plus.setAttribute("aria-label", "Insert and note actions"); plus.setAttribute("aria-haspopup", "menu");
+          plus.setAttribute("aria-expanded", "false"); plus.setAttribute("aria-controls", "xPlusMenu"); plus.title = "Insert (type / on an empty line)";
+          var back = document.createElement("button");
+          back.type = "button"; back.className = "x-pback"; back.innerHTML = IC.back; back.setAttribute("aria-label", "Back"); back.title = "Back";
+          back.addEventListener("click", function () { var b = q(".x-tools .x-back"); if (b) b.click(); });
+          ed.insertBefore(back, ed.firstChild); ed.insertBefore(plus, ed.firstChild);
+          plus.addEventListener("click", function () { menu.hidden || !menu.classList.contains("is-open") ? open(false) : close(true); });
+          /* the hidden Improve pill places its popover from its own rect; point it at the + instead */
+          var imp = q('[data-ai="improve"]');
+          if (imp) imp.getBoundingClientRect = function () { return plus.getBoundingClientRect(); };
+        }
+        new MutationObserver(mount).observe(ed, { childList: true });
+        mount();
+
+        function item(act, icon, label, cls) { return '<button type="button" role="menuitem" class="x-pm-i' + (cls ? " " + cls : "") + '" data-pm="' + act + '">' + icon + "<span>" + label + "</span></button>"; }
+        function build() {
+          var pinB = q('.x-tools [data-act="pin"]'), arB = q('.x-tools [data-act="archive"]');
+          var pinned = pinB && pinB.getAttribute("aria-pressed") === "true", archived = arB && arB.getAttribute("aria-pressed") === "true";
+          var sws = [].map.call(ed.querySelectorAll(".x-tools .x-sw"), function (s) {
+            return '<button type="button" role="menuitemradio" class="x-pm-sw" data-pm-color="' + s.dataset.color + '" aria-checked="' + s.classList.contains("is-active") + '" aria-label="' + s.getAttribute("aria-label") + '" title="' + s.title + '" style="' + s.getAttribute("style") + '"><i></i></button>';
+          }).join("");
+          menu.innerHTML =
+            '<p class="x-pm-h" aria-hidden="true">Insert</p>' + item("todo", IC.todo, "Checklist") + item("img", IC.img, "Image") + item("table", IC.table, "Table") + item("file", IC.file, "Attach file") +
+            '<p class="x-pm-h" aria-hidden="true">Style</p><div class="x-pm-row" role="group" aria-label="Colour">' + IC.colour + '<span>Colour</span><span class="x-pm-sws">' + sws + "</span></div>" +
+            '<p class="x-pm-h" aria-hidden="true">AI</p>' + item("improve", IC.improve, "Improve writing") + item("ask", IC.ask, "Ask assistant") + (SR ? item("voice", IC.mic, rec ? "Stop voice typing" : "Voice typing") : "") +
+            '<p class="x-pm-h" aria-hidden="true">Note</p>' + item("pin", IC.pin, pinned ? "Unpin" : "Pin") + item("archive", IC.archive, archived ? "Unarchive" : "Archive") +
+            '<div class="x-pm-div" role="separator"></div>' + item("delete", IC.trash, "Delete", "is-danger");
+        }
+        function focusables() { return [].slice.call(menu.querySelectorAll(".x-pm-i, .x-pm-sw")); }
+        function open(slash) {
+          if (!plus) return;
+          clearTimeout(closeT);
+          fromSlash = slash;
+          var b = body();
+          caret = b && !b.hidden ? b.selectionStart : b ? b.value.length : 0;
+          build();
+          menu.hidden = false; menu.classList.remove("is-open");
+          var r = plus.getBoundingClientRect(), w = menu.offsetWidth, h = menu.offsetHeight;
+          var left = Math.max(8, Math.min(r.right - w, window.innerWidth - w - 8)), top = r.bottom + 8;
+          if (top + h > window.innerHeight - 8) top = Math.max(8, window.innerHeight - h - 8);
+          menu.style.left = left + "px"; menu.style.top = top + "px";
+          void menu.offsetWidth;
+          menu.classList.add("is-open");
+          plus.setAttribute("aria-expanded", "true");
+          focusables()[0].focus();
+        }
+        function close(refocus) {
+          if (menu.hidden) return;
+          menu.classList.remove("is-open");
+          if (plus) plus.setAttribute("aria-expanded", "false");
+          if (reduce.matches) menu.hidden = true; else closeT = setTimeout(function () { menu.hidden = true; }, 180);
+          if (refocus) {
+            var b = body();
+            if (fromSlash && b && document.contains(b)) restoreBody(b); else if (plus && document.contains(plus)) plus.focus();
+          }
+        }
+        function restoreBody(b) {
+          if (b.hidden) { var v = document.getElementById("view"); if (v) v.click(); }
+          b.focus();
+          var p = Math.min(caret == null ? b.value.length : caret, b.value.length);
+          b.setSelectionRange(p, p);
+        }
+        function trigger(sel) { var el = q(".x-tools " + sel); if (el) el.click(); }
+        function run(act) {
+          if (act === "todo") trigger('[data-act="todo"]');
+          else if (act === "img" || act === "file") trigger('[data-act="img"]');
+          else if (act === "table") trigger('[data-act="table"]');
+          else if (act === "improve") trigger('[data-ai="improve"]');
+          else if (act === "ask") trigger('[data-ai="panel"]');
+          else if (act === "pin") trigger('[data-act="pin"]');
+          else if (act === "archive") trigger('[data-act="archive"]');
+          else if (act === "delete") trigger('[data-act="delete"]');
+          else if (act === "voice") voice();
+        }
+        menu.addEventListener("click", function (e) {
+          var sw = e.target.closest("[data-pm-color]"), it = e.target.closest("[data-pm]");
+          if (!sw && !it) return;
+          var keep = sw || (it && it.dataset.pm === "voice") ? fromSlash : false;
+          close(keep || (it && /^(pin|archive)$/.test(it.dataset.pm)));
+          /* defer so this click finishes bubbling before the existing handlers run */
+          setTimeout(function () { if (sw) trigger('[data-color="' + sw.dataset.pmColor + '"]'); else run(it.dataset.pm); }, 0);
+        });
+        menu.addEventListener("keydown", function (e) {
+          var f = focusables(), i = f.indexOf(document.activeElement);
+          if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(true); }
+          else if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); f[(i + 1) % f.length].focus(); }
+          else if (e.key === "ArrowUp" || e.key === "ArrowLeft") { e.preventDefault(); f[(i - 1 + f.length) % f.length].focus(); }
+          else if (e.key === "Home") { e.preventDefault(); f[0].focus(); }
+          else if (e.key === "End") { e.preventDefault(); f[f.length - 1].focus(); }
+          else if (e.key === "Tab") close(false);
+        });
+        document.addEventListener("pointerdown", function (e) {
+          if (!menu.hidden && !menu.contains(e.target) && !(plus && plus.contains(e.target))) close(false);
+        }, true);
+        /* "/" on an empty line opens the menu instead of typing */
+        ed.addEventListener("keydown", function (e) {
+          var b = e.target;
+          if (e.key !== "/" || b.id !== "body" || e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;
+          var v = b.value, s = b.selectionStart;
+          if (s !== b.selectionEnd) return;
+          var ls = v.lastIndexOf("\n", s - 1) + 1, le = v.indexOf("\n", s); if (le < 0) le = v.length;
+          if (v.slice(ls, le).trim()) return;
+          e.preventDefault();
+          open(true);
+        }, true);
+
+        function voice() {
+          if (rec) { rec.stop(); return; }
+          var b = body(); if (!b) return;
+          restoreBody(b);
+          rec = new SR(); rec.lang = "en-IN"; rec.continuous = true; rec.interimResults = false;
+          rec.onresult = function (ev) {
+            var b2 = body(); if (!b2) return;
+            if (b2.hidden) restoreBody(b2);
+            for (var k = ev.resultIndex; k < ev.results.length; k++) {
+              if (!ev.results[k].isFinal) continue;
+              var t = ev.results[k][0].transcript.trim(); if (!t) continue;
+              var p = document.activeElement === b2 ? b2.selectionStart : Math.min(caret, b2.value.length);
+              var before = b2.value.slice(0, p), ins = (before && !/\s$/.test(before) ? " " : "") + t;
+              b2.value = before + ins + b2.value.slice(p);
+              caret = p + ins.length; b2.setSelectionRange(caret, caret);
+              b2.dispatchEvent(new Event("input", { bubbles: true }));
+            }
+          };
+          rec.onend = function () { rec = null; if (window.toast) toast("Voice typing off"); };
+          rec.onerror = function (ev) { if (window.toast && ev.error !== "no-speech" && ev.error !== "aborted") toast("Voice typing unavailable"); };
+          try { rec.start(); if (window.toast) toast("Listening… open + to stop"); } catch (err) { rec = null; }
+        }
       })();
     </script>
   </body>
