@@ -395,7 +395,7 @@
       .x-hb-key i { height: 10px; border-radius: 3px; margin-right: 6px; }
       @media (prefers-reduced-motion: reduce) { .x-hb-ring { animation: none !important; transition: none !important; } }
     </style>
-  <style id="hotfix-toolbar">.x-tools{flex-wrap:wrap}.x-tools .x-swatches{flex-wrap:wrap}.x-tools [aria-label*="elete" i],.x-tools [title*="elete" i],.x-tools .x-del,.x-tools .del{color:#e5484d!important}</style></head>
+  </head>
   <body>
     <div class="page" id="top">
       <main class="main">
@@ -1729,5 +1729,12 @@
         });
       })();
     </script>
-  </body>
+  <style id="hotfix-toolbar2">
+.x-tools{flex-wrap:wrap!important;row-gap:8px!important;min-width:0!important}
+.x-tools .x-swatches{flex-wrap:wrap!important}
+.x-tools>*{flex-shrink:1;min-width:0}
+.x-tpill{white-space:nowrap;margin-left:auto}
+.x-tools [data-act="delete"]{color:#e5484d!important}
+[data-act="export"],[data-act="import"],[data-act="export-md"],[data-act="exportmd"],[data-act="md"]{display:none!important}
+</style><script id="hotfix-noexport">(function(){function z(){document.querySelectorAll('button,a,span,p,div.banner,[class*="banner"],[class*="foot"] a').forEach(function(e){var t=(e.textContent||'').trim();if(e.children.length<=1&&/^(Export|Import|Export JSON|Import JSON|Export \u00b7 Import|Export · Import)$/i.test(t))e.style.display='none';if(/Preview mode/i.test(t)&&t.length<160)e.style.display='none';});}document.addEventListener('DOMContentLoaded',z);setTimeout(z,300);new MutationObserver(function(){clearTimeout(window.__zt);window.__zt=setTimeout(z,50)}).observe(document.documentElement,{childList:true,subtree:true});})();</script></body>
 </html>
