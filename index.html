@@ -384,6 +384,41 @@
       .x-hb-grid span.is-today { outline: 2px solid var(--text-primary); outline-offset: 1px; }
       .x-hb-span3 { grid-column: span 3; }
       @media (max-width: 760px) { .x-hb-span3 { grid-column: 1 / -1; } }
+
+      /* Reminders, theme menu, card ⋯ menu, toolbar fix */
+      .x-tools { flex-wrap: wrap; }
+      .x-tools .x-swatches { flex-wrap: wrap; }
+      .x-editor .x-tools .x-ib[data-act="delete"]:not(.x-back) { opacity: 1; color: #e5484d; }
+      .x-rm-when { font: var(--type-caption); color: var(--text-secondary); }
+      .x-rm-late { color: var(--fill-system-red); }
+      .x-rm-link { border: 0; min-height: 28px; padding: 0 10px; border-radius: var(--r-pill); background: var(--fill-tertiary); color: var(--text-primary); font: var(--type-caption); cursor: pointer; }
+      .x-rm-group { display: grid; gap: 8px; }
+      .x-rm-group > h3 { font: var(--type-label); color: var(--text-secondary); }
+      .x-rm-toast { bottom: 88px; flex-wrap: wrap; max-width: calc(100vw - 32px); border-radius: var(--r-l); padding: 10px 10px 10px 18px; }
+      .x-rm-toast b { font-weight: var(--weight-medium); margin-right: auto; }
+      .x-rm-toast button { min-height: 46px; min-width: var(--tap); }
+      .x-rm-tile ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font: var(--type-small); }
+      .x-rm-tile li { display: flex; gap: 12px; justify-content: space-between; }
+      .x-rm-tile small { color: var(--x-grey); }
+      .x-menu { position: fixed; z-index: 60; display: grid; gap: 2px; padding: 6px; min-width: 168px; background: var(--x-tile); border: 1px solid var(--x-line); border-radius: var(--r-s); box-shadow: var(--hark-shadow); }
+      .x-menu[hidden] { display: none; }
+      .x-menu button { display: flex; align-items: center; gap: 8px; min-height: var(--tap); padding: 0 12px; border: 0; border-radius: 8px; background: none; color: var(--text-primary); font: var(--type-label); text-align: left; cursor: pointer; }
+      .x-menu button:hover, .x-menu button:focus-visible { background: var(--x-hover); outline: none; }
+      .x-menu [aria-checked="true"]::after { content: "✓"; margin-left: auto; color: var(--x-accent); }
+      .x-menu .is-danger { color: #e5484d; }
+      .x-cw { position: relative; }
+      .x-cw .x-card h3 { padding-right: 30px; }
+      .x-cmore { position: absolute; top: 8px; right: 8px; width: var(--tap); height: var(--tap); border: 0; border-radius: 12px; background: none; color: var(--x-grey); font: var(--type-heading); line-height: 1; cursor: pointer; opacity: 0; transition: opacity 0.2s; }
+      .x-cmore:hover { background: var(--x-hover); }
+      .x-cw:hover .x-cmore, .x-cmore:focus-visible, .x-cmore[aria-expanded="true"] { opacity: 1; }
+      @media (hover: none) { .x-cmore { opacity: 1; } }
+      /* Pitch Black */
+      :root[data-theme="black"] { color-scheme: dark; --x-bg: #000; --x-tile: #0a0a0a; --x-line: #1f1f1f; --x-hover: #161616; --x-c-plain: #0a0a0a; --x-grey: #a1a1aa; --text-primary: #fff; --text-secondary: #a1a1aa; --fill-primary-on: #000; --fill-tertiary: #0a0a0a; --stroke-primary: #1f1f1f; --stroke-secondary: #1f1f1f; }
+      :root[data-theme="black"] body, :root[data-theme="black"] .x-side { background: #000; }
+      :root[data-theme="black"] .x-editor { background: #000; border: 1px solid #1f1f1f; }
+      :root[data-theme="black"] .x-card, :root[data-theme="black"] .x-dt, :root[data-theme="black"] .x-nx-box, :root[data-theme="black"] .x-nx-card, :root[data-theme="black"] .x-hb, :root[data-theme="black"] .x-search, :root[data-theme="black"] .x-tagrow, :root[data-theme="black"] .x-menu { border: 1px solid #1f1f1f; box-shadow: none; }
+      :root[data-theme="black"] .x-card:hover { background: #111; }
+      :root[data-theme="black"] .x-sun { display: none; }
       .x-hb-chart { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; height: 130px; }
       .x-hb-col { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 4px; text-align: center; font: var(--type-caption); color: var(--text-secondary); }
       .x-hb-col.is-today { color: var(--text-primary); }
@@ -430,6 +465,9 @@
             </button>
             <button class="x-ib" data-nx="habits" title="Habits (H)" aria-label="Habits">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+            </button>
+            <button class="x-ib" data-nx="reminders" title="Reminders (R)" aria-label="Reminders">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16zM10 20.5a2 2 0 0 0 4 0"/></svg>
             </button>
             <span class="x-gap"></span>
             <button class="x-ib" data-act="export" title="Export JSON" aria-label="Export JSON">
@@ -1304,7 +1342,7 @@
       (function () {
         var KEY = "nx_extra", ok = true, d = null;
         try { d = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { ok = false; }
-        function norm(x) { x = x && typeof x === "object" ? x : {}; return { quick: Array.isArray(x.quick) ? x.quick : [], projects: Array.isArray(x.projects) ? x.projects : [], tasks: Array.isArray(x.tasks) ? x.tasks : [], seeded: !!x.seeded, habits: Array.isArray(x.habits) ? x.habits : [], habitsSeeded: !!x.habitsSeeded }; }
+        function norm(x) { x = x && typeof x === "object" ? x : {}; return { quick: Array.isArray(x.quick) ? x.quick : [], projects: Array.isArray(x.projects) ? x.projects : [], tasks: Array.isArray(x.tasks) ? x.tasks : [], seeded: !!x.seeded, habits: Array.isArray(x.habits) ? x.habits : [], habitsSeeded: !!x.habitsSeeded, reminders: Array.isArray(x.reminders) ? x.reminders : [], remindersSeeded: !!x.remindersSeeded }; }
         d = norm(d);
         function save() { if (!ok) return; try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) { ok = false; } }
         function id() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
@@ -1727,6 +1765,186 @@
           if (a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return;
           e.preventDefault(); open(true);
         });
+      })();
+    </script>
+    <script>
+      /* Reminders (kept as `reminders` in the NX store), theme menu with Pitch Black, and a ⋯ menu on note cards */
+      (function () {
+        if (!window.NX) return;
+        var view = document.getElementById("nxView"), dashBox = document.getElementById("tdDash"), btn = document.querySelector('[data-nx="reminders"]');
+        var editId = null, queue = [], showing = null, actx = null, MIN = 6e4;
+        function R() { var d = NX.data(); if (!Array.isArray(d.reminders)) d.reminders = []; return d.reminders; }
+        function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+        function pad(n) { return (n < 10 ? "0" : "") + n; }
+        function local(ms) { var t = new Date(ms); return t.getFullYear() + "-" + pad(t.getMonth() + 1) + "-" + pad(t.getDate()) + "T" + pad(t.getHours()) + ":" + pad(t.getMinutes()); }
+        function dayEnd() { var t = new Date(); t.setHours(23, 59, 59, 999); return +t; }
+        function find(id) { return R().find(function (r) { return r.id === id; }); }
+        function nice(ms) { var t = new Date(ms), sameDay = new Date().toDateString() === t.toDateString(); return (sameDay ? "Today" : t.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })) + " · " + t.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); }
+        function step(ms, rep) { var t = new Date(ms); if (rep === "daily") t.setDate(t.getDate() + 1); else if (rep === "weekly") t.setDate(t.getDate() + 7); else if (rep === "monthly") t.setMonth(t.getMonth() + 1); return +t; }
+        function notes() { return typeof store === "object" && store.getNotes ? store.getNotes().filter(function (n) { return !n.archived; }) : []; }
+        function linkName(l) {
+          if (!l) return ""; var p = l.split(":"), k = p[0], id = p.slice(1).join(":"), x;
+          if (k === "note") { x = notes().find(function (n) { return n.id === id; }); return x ? "📝 " + (x.title || "Untitled") : ""; }
+          if (k === "task") { x = (NX.data().tasks || []).find(function (t) { return t.id === id; }); return x ? "☑️ " + x.title : ""; }
+          x = (NX.data().projects || []).find(function (q) { return q.id === id; }); return x ? (x.emoji || "📁") + " " + x.name : "";
+        }
+        function linkOpts(sel) {
+          function og(label, k, list, name) { return list.length ? '<optgroup label="' + label + '">' + list.map(function (x) { var v = k + ":" + x.id; return '<option value="' + esc(v) + '"' + (v === sel ? " selected" : "") + ">" + esc(name(x)) + "</option>"; }).join("") + "</optgroup>" : ""; }
+          return '<option value="">No link</option>' + og("Notes", "note", notes(), function (n) { return n.title || "Untitled"; }) + og("Tasks", "task", (NX.data().tasks || []).filter(function (t) { return !t.done; }), function (t) { return t.title; }) + og("Projects", "project", NX.data().projects || [], function (p) { return (p.emoji || "") + " " + p.name; });
+        }
+
+        /* seed once */
+        var d0 = NX.data();
+        if (!d0.remindersSeeded) { var tm = new Date(); tm.setDate(tm.getDate() + 1); tm.setHours(10, 0, 0, 0); R().push({ id: NX.id(), title: "Submit assignment", at: +tm, repeat: "none", link: "", done: false }); d0.remindersSeeded = true; NX.save(); }
+
+        function row(r, now) {
+          var ln = linkName(r.link), late = !r.done && r.at < now;
+          return '<li class="' + (r.done ? "is-done" : "") + '" data-rm="' + r.id + '"><span class="x-nx-t">' + esc(r.title) + '</span><span class="x-rm-when' + (late ? " x-rm-late" : "") + '">' + esc(nice(r.at)) + (r.repeat !== "none" ? " · ↻ " + esc(r.repeat) : "") + "</span>" +
+            (ln ? '<button class="x-rm-link" data-rm-link>' + esc(ln) + "</button>" : "") +
+            (r.done ? "" : '<button class="btn" data-rm-done>Done</button>') + '<button class="btn" data-rm-edit>Edit</button><button class="x-nx-x" data-rm-del aria-label="Delete reminder">×</button></li>';
+        }
+        function render() {
+          var now = Date.now(), end = dayEnd(), e = editId && find(editId), all = R().slice().sort(function (a, b) { return a.at - b.at; });
+          var g = [["Overdue", all.filter(function (r) { return !r.done && r.at < now; })], ["Today", all.filter(function (r) { return !r.done && r.at >= now && r.at <= end; })], ["Upcoming", all.filter(function (r) { return !r.done && r.at > end; })], ["Done", all.filter(function (r) { return r.done; })]];
+          var dflt = e ? e.at : Math.ceil((now + 36e5) / 9e5) * 9e5;
+          view.innerHTML = '<div class="x-dhead"><h2>Reminders</h2></div>' +
+            '<form class="x-nx-box" id="rmForm"><h3>' + (e ? "Edit reminder" : "New reminder") + '</h3><div class="x-nx-row">' +
+            '<input name="title" id="rmTitle" class="x-nx-grow" placeholder="Remind me to…" required aria-label="Reminder title" autocomplete="off" value="' + esc(e ? e.title : "") + '" />' +
+            '<input name="at" type="datetime-local" required aria-label="Date and time" value="' + local(dflt) + '" />' +
+            '<select name="repeat" aria-label="Repeat">' + ["none", "daily", "weekly", "monthly"].map(function (x) { return '<option value="' + x + '"' + ((e ? e.repeat : "none") === x ? " selected" : "") + ">" + (x === "none" ? "No repeat" : x.charAt(0).toUpperCase() + x.slice(1)) + "</option>"; }).join("") + "</select>" +
+            '<select name="link" aria-label="Link to a note, task or project">' + linkOpts(e ? e.link : "") + "</select>" +
+            '<button class="btn" type="submit">' + (e ? "Save" : "Add") + "</button>" + (e ? '<button class="btn" type="button" data-rm-cancel>Cancel</button>' : "") + "</div></form>" +
+            (all.length ? g.filter(function (x) { return x[1].length; }).map(function (x) { return '<div class="x-rm-group"><h3>' + x[0] + " · " + x[1].length + "</h3><ul>" + x[1].map(function (r) { return row(r, now); }).join("") + "</ul></div>"; }).join("") : '<p class="x-nx-muted">No reminders yet. Add one above.</p>') +
+            '<p class="fineprint">Reminders ring while the app is open. Press R anywhere to open them.</p>';
+        }
+        function refresh() { if (NX.mode() === "reminders" && !view.contains(document.activeElement)) render(); dash(); }
+
+        function dash() {
+          var bento = dashBox.querySelector(".x-bento"); if (!bento) return;
+          bento.querySelectorAll(".x-rm-tile").forEach(function (el) { el.remove(); });
+          var now = Date.now(), open = R().filter(function (r) { return !r.done; }), missed = open.filter(function (r) { return r.at < now; }).length;
+          var next = open.filter(function (r) { return r.at >= now; }).sort(function (a, b) { return a.at - b.at; }).slice(0, 3);
+          bento.insertAdjacentHTML("beforeend", '<div class="x-tile x-dt x-dt--4 x-rm-tile"><span class="x-dl">Reminders: next up<button class="x-td-go" data-rm-go>View</button></span>' +
+            '<span class="x-hint"' + (missed ? ' style="color:var(--fill-system-red)"' : "") + ">" + missed + " missed</span>" +
+            (next.length ? "<ul>" + next.map(function (r) { return "<li><span>" + esc(r.title) + "</span><small>" + esc(nice(r.at)) + "</small></li>"; }).join("") + "</ul>" : '<span class="x-hint">Nothing coming up. Press R to add a reminder.</span>') + "</div>");
+        }
+        if (typeof window.renderDash === "function") { var orig = window.renderDash; window.renderDash = function () { orig.apply(this, arguments); dash(); }; }
+        new MutationObserver(function () { if (!dashBox.querySelector(".x-rm-tile")) dash(); }).observe(dashBox, { childList: true });
+
+        /* checker: toast, beep, notification */
+        var tEl = document.createElement("div");
+        tEl.className = "x-toast x-rm-toast"; tEl.setAttribute("data-undo", ""); tEl.setAttribute("role", "alert");
+        tEl.innerHTML = '<span>⏰ <b id="rmMsg"></b></span><button type="button" data-rmt="10">Snooze 10 min</button><button type="button" data-rmt="60">Snooze 1 hr</button><button type="button" data-rmt="done">Done</button>';
+        document.body.appendChild(tEl);
+        document.addEventListener("pointerdown", function () { try { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === "suspended") actx.resume(); } catch (e) {} }, { passive: true });
+        function beep() { try { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); var o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime; o.type = "sine"; o.frequency.value = 880; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.2, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35); o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + 0.4); } catch (e) {} }
+        function notify(r) { try { if ("Notification" in window && Notification.permission === "granted") new Notification("Reminder", { body: r.title }); } catch (e) {} }
+        function next() {
+          showing = null;
+          while (queue.length && !showing) { var r = find(queue.shift()); if (r && !r.done && r.at <= Date.now()) showing = r; }
+          if (!showing) { tEl.classList.remove("is-on"); return; }
+          document.getElementById("rmMsg").textContent = showing.title; tEl.classList.add("is-on"); beep(); notify(showing);
+        }
+        function complete(r) { if (r.repeat && r.repeat !== "none") { var n = Date.now(); do { r.at = step(r.at, r.repeat); } while (r.at <= n); r.rang = null; } else r.done = true; }
+        function check() {
+          var now = Date.now(), add = false;
+          R().forEach(function (r) { if (!r.done && r.at <= now && r.rang !== r.at) { r.rang = r.at; if (queue.indexOf(r.id) < 0 && (!showing || showing.id !== r.id)) queue.push(r.id); add = true; } });
+          if (add) { NX.save(); if (!showing) next(); }
+          refresh();
+        }
+        tEl.addEventListener("click", function (e) {
+          var b = e.target.closest("[data-rmt]"); if (!b || !showing) return;
+          var a = b.dataset.rmt;
+          if (a === "done") { complete(showing); if (window.toast) toast(showing.repeat !== "none" ? "Next: " + nice(showing.at) : "Reminder done"); }
+          else { showing.at = Date.now() + (+a) * MIN; showing.rang = null; }
+          NX.save(); refresh(); next();
+        });
+        setInterval(check, 20000); setTimeout(check, 1500);
+
+        /* view events */
+        function openR(focus) { btn.click(); if (focus) { var i = document.getElementById("rmTitle"); if (i) i.focus(); } }
+        btn.addEventListener("click", function () { editId = null; render(); });
+        document.addEventListener("click", function (e) {
+          var t = e.target, li = t.closest("[data-rm]"), r = li && find(li.dataset.rm);
+          if (t.closest("[data-rm-go]")) { openR(false); return; }
+          if (!view.contains(t) || NX.mode() !== "reminders") return;
+          if (t.closest("[data-rm-link]") && r) {
+            var p = r.link.split(":"), k = p[0], id = p.slice(1).join(":");
+            if (k === "note") { NX.hide(); if (typeof setView === "function") setView("notes"); if (typeof select === "function") select(id); }
+            else if (k === "task") document.querySelector('[data-nx="todo"]').click(); else NX.show("projects");
+          } else if (t.closest("[data-rm-done]") && r) { complete(r); NX.save(); render(); dash(); if (window.toast) toast(r.done ? "Reminder done" : "Next: " + nice(r.at)); }
+          else if (t.closest("[data-rm-edit]") && r) { editId = r.id; render(); view.scrollTop = 0; document.getElementById("rmTitle").focus(); }
+          else if (t.closest("[data-rm-del]") && r) { NX.data().reminders = R().filter(function (z) { return z !== r; }); if (editId === r.id) editId = null; NX.save(); render(); dash(); if (window.toast) toast("Reminder deleted"); }
+          else if (t.closest("[data-rm-cancel]")) { editId = null; render(); }
+        });
+        view.addEventListener("submit", function (e) {
+          var f = e.target; if (f.id !== "rmForm") return; e.preventDefault();
+          var v = function (n) { return f.elements[n].value.trim(); }, r = editId && find(editId), at = +new Date(v("at"));
+          if (!v("title") || isNaN(at)) return;
+          var vals = { title: v("title"), at: at, repeat: v("repeat"), link: v("link"), done: false, rang: null };
+          if (r) Object.assign(r, vals); else R().push(Object.assign({ id: NX.id() }, vals));
+          try { if ("Notification" in window && Notification.permission === "default") Notification.requestPermission(); } catch (x) {}
+          if (window.toast) toast(r ? "Reminder saved" : "Reminder set for " + nice(at));
+          editId = null; NX.save(); render(); dash();
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") closeMenus();
+          if (e.key.toLowerCase() !== "r" || e.ctrlKey || e.metaKey || e.altKey) return;
+          var a = document.activeElement;
+          if (a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return;
+          e.preventDefault(); openR(true);
+        });
+
+        /* menus: theme choice and the note card ⋯ */
+        var menu = document.createElement("div"); menu.className = "x-menu"; menu.setAttribute("role", "menu"); menu.hidden = true; document.body.appendChild(menu);
+        var menuFor = null;
+        function closeMenus() { menu.hidden = true; if (menuFor) menuFor.setAttribute("aria-expanded", "false"); menuFor = null; }
+        function openMenu(anchor, html, side) {
+          closeMenus(); menuFor = anchor; anchor.setAttribute("aria-expanded", "true"); menu.innerHTML = html; menu.hidden = false;
+          var a = anchor.getBoundingClientRect(), w = menu.offsetWidth, h = menu.offsetHeight, x, y;
+          if (side) { x = a.right + 8; y = a.bottom - h; } else { x = a.right - w; y = a.bottom + 4; if (y + h > innerHeight - 8) y = a.top - h - 4; }
+          menu.style.left = Math.max(8, Math.min(x, innerWidth - w - 8)) + "px"; menu.style.top = Math.max(8, y) + "px";
+          var f = menu.querySelector("button"); if (f) f.focus();
+        }
+        var root = document.documentElement, THEMES = [["light", "Light"], ["dark", "Dark"], ["black", "Pitch Black"]];
+        try { if (localStorage.getItem("hark-theme") === "black") root.setAttribute("data-theme", "black"); } catch (e) {}
+        var thBtn = document.querySelector('.x-side [data-act="theme"]');
+        if (thBtn) {
+          thBtn.title = "Theme"; thBtn.setAttribute("aria-label", "Theme"); thBtn.setAttribute("aria-haspopup", "menu"); thBtn.setAttribute("aria-expanded", "false");
+          thBtn.addEventListener("click", function (e) {
+            e.stopPropagation(); if (menuFor === thBtn) return closeMenus();
+            var cur = root.getAttribute("data-theme");
+            openMenu(thBtn, THEMES.map(function (t) { return '<button role="menuitemradio" data-theme-pick="' + t[0] + '" aria-checked="' + (cur === t[0]) + '">' + t[1] + "</button>"; }).join(""), true);
+          });
+        }
+        var cardsEl = document.getElementById("cards");
+        function decorate() {
+          cardsEl.querySelectorAll(".x-card[data-id]").forEach(function (c) {
+            if (c.parentNode.classList.contains("x-cw")) return;
+            var w = document.createElement("div"); w.className = "x-cw"; c.parentNode.insertBefore(w, c); w.appendChild(c);
+            w.insertAdjacentHTML("beforeend", '<button class="x-cmore" type="button" data-cmore="' + c.dataset.id + '" aria-haspopup="menu" aria-expanded="false" aria-label="More actions">⋯</button>');
+          });
+        }
+        if (typeof window.renderList === "function") { var origList = window.renderList; window.renderList = function () { origList.apply(this, arguments); decorate(); }; }
+        decorate();
+        cardsEl.addEventListener("click", function (e) {
+          var b = e.target.closest("[data-cmore]"); if (!b) return;
+          e.stopPropagation(); if (menuFor === b) return closeMenus();
+          var n = typeof store === "object" ? store.getNote(b.dataset.cmore) : null; if (!n) return;
+          openMenu(b, '<button role="menuitem" data-card-act="pin">' + (n.pinned ? "Unpin" : "Pin") + '</button><button role="menuitem" data-card-act="archive">' + (n.archived ? "Unarchive" : "Archive") + '</button><button role="menuitem" class="is-danger" data-card-act="delete">Delete</button>', false);
+          menu.dataset.note = n.id;
+        });
+        menu.addEventListener("click", function (e) {
+          e.stopPropagation();
+          var t = e.target.closest("[data-theme-pick]"), c = e.target.closest("[data-card-act]");
+          if (t) { var v = t.dataset.themePick; root.setAttribute("data-theme", v); try { localStorage.setItem("hark-theme", v); } catch (x) {} closeMenus(); if (thBtn) thBtn.focus(); return; }
+          if (!c) return;
+          var id = menu.dataset.note, act = c.dataset.cardAct; closeMenus();
+          if (typeof select === "function") select(id);
+          var tb = document.querySelector('#editor [data-act="' + act + '"]'); if (tb) tb.click();
+          if (act !== "delete" && window.matchMedia("(max-width: 760px)").matches) document.getElementById("app").classList.remove("is-editing");
+        });
+        document.addEventListener("click", function (e) { if (!menu.hidden && !menu.contains(e.target)) closeMenus(); });
       })();
     </script>
   <style id="hotfix-toolbar2">
