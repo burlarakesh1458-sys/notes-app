@@ -779,6 +779,85 @@
       .x-av-big:hover { background: var(--fill-primary); opacity: 0.9; }
       @media (max-width: 600px) { .x-av-b span { display: none; } .x-av-b:not(.x-av-big) { padding: 0; } }
     </style>
+    <style>
+      /* ---------- Focus mode: an open note fills the screen beside a slim rail ---------- */
+      :root { --x-gcal: #4285F4; --x-rail: 248px; }
+      .x-fm-back, .x-fm-tog, .x-fm-notes { display: none !important; }
+      @media (min-width: 761px) {
+        /* the notes grid: list takes the whole area while no note is open */
+        .x-app:not(.is-editing) .x-editor { display: none; }
+        .x-app:not(.is-editing) .x-list { grid-column: 2 / -1; }
+        .x-app:not(.is-editing) .x-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); align-content: start; }
+        .x-app:not(.is-editing) .x-cards > :not(.x-card):not(.x-nx-card) { grid-column: 1 / -1; }
+
+        .x-app.is-focus { position: fixed; inset: 0; z-index: 30; height: auto; min-height: 0; padding: 12px; gap: 12px; background: var(--x-bg); grid-template-columns: var(--x-rail) minmax(0, 1fr); transition: grid-template-columns var(--x-view) var(--ease); }
+        .x-app.is-focus.is-rail-min { --x-rail: 68px; }
+        .x-app.is-focus .x-list { display: none; }
+        .x-app.is-focus .x-editor { grid-column: 2; animation: x-fm-in var(--x-view) var(--ease) backwards; }
+        .x-app.is-focus .x-side { animation: x-fm-rail var(--x-view) var(--ease) backwards; }
+        @keyframes x-fm-in { from { opacity: 0; transform: translateY(12px) scale(0.99); } }
+        @keyframes x-fm-rail { from { opacity: 0; transform: translateX(-8px); } }
+
+        /* rail parts */
+        .x-app.is-focus .x-fm-back { display: flex !important; margin-bottom: 4px; }
+        .x-app.is-focus .x-fm-tog { display: grid !important; }
+        .x-app.is-focus .x-fm-notes { display: flex !important; }
+        .x-app.is-focus .x-sb-body { flex: none; max-height: 36%; }
+        .x-fm-notes { flex: 1; min-height: 0; flex-direction: column; }
+        .x-fm-list { flex: 1; min-height: 0; overflow-y: auto; display: grid; align-content: start; }
+        .x-sb .x-fm-note { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; width: 100%; min-height: 36px; padding: 0 8px; border-radius: 12px; text-align: left; }
+        .x-fm-note span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .x-fm-note small { font-size: 12px; color: var(--x-grey); }
+        .x-sb .x-fm-note[aria-current="true"] { background: var(--x-sb-on); color: var(--x-accent); }
+        .x-fm-empty { padding: 8px; font-size: 13px; color: var(--x-grey); }
+
+        /* the readable column */
+        .x-app.is-focus .x-ed { padding: 72px 32px 120px; justify-items: center; }
+        .x-app.is-focus .x-ed > * { width: 100%; max-width: 760px; }
+        .x-app.is-focus .x-editor .x-title { font: 500 28px/36px var(--sans); letter-spacing: -0.01em; padding-right: 0; }
+        .x-app.is-focus .x-body, .x-app.is-focus .x-view { font-size: 15px; line-height: 1.65; }
+
+        /* collapsed rail: icons only */
+        .x-app.is-focus.is-rail-min .x-sb-top { flex-direction: column; height: auto; gap: 4px; }
+        .x-app.is-focus.is-rail-min .x-sb-brand { font-size: 0 !important; flex: none; width: 44px; padding: 0; justify-content: center; }
+        .x-app.is-focus.is-rail-min :is(.x-sb-body .x-sb-row, .x-fm-back, .x-sb-swbtn) { justify-content: center; padding: 0; }
+        .x-app.is-focus.is-rail-min :is(.x-sb-body .x-sb-row span, .x-sb-body .x-sb-row small, .x-fm-back span, .x-sb-swbtn span, .x-sb-swbtn .x-sb-chev, .x-sb-label, .x-sb-foot > span, .x-thd-name) { display: none; }
+        .x-app.is-focus.is-rail-min .x-fm-notes { display: none !important; }
+        .x-app.is-focus.is-rail-min .x-sb-body { flex: 1; max-height: none; }
+        .x-app.is-focus.is-rail-min .x-sb-menu { right: auto; min-width: 200px; }
+        .x-app.is-focus.is-rail-min .x-sb-foot { flex-direction: column; }
+        .x-app.is-focus.is-rail-min .x-sb .x-thd { flex: none; width: 44px; padding: 0; justify-content: center; }
+      }
+      @media (prefers-reduced-motion: reduce) { .x-app.is-focus, .x-app.is-focus .x-editor, .x-app.is-focus .x-side { animation: none !important; transition: none !important; } }
+
+      /* + popover always above the editor and its title */
+      .x-pm { z-index: 100; transform-origin: top right; }
+      .x-enh { z-index: 100; }
+
+      /* ---------- Google Calendar ---------- */
+      .x-gc-btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 1px solid var(--x-line); border-radius: 12px; background: none; color: inherit; font: inherit; font-size: 13px; white-space: nowrap; cursor: pointer; }
+      .x-gc-btn:hover:not(:disabled) { background: var(--x-hover); }
+      .x-gc-btn:disabled { opacity: 0.6; cursor: default; }
+      .x-gc-btn svg, .x-gc-ic { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+      .x-gc-btn:focus-visible { outline: 2px solid var(--x-accent); outline-offset: 2px; }
+      .x-gc-btn--chip { height: 28px; padding: 0 10px; border-radius: var(--r-pill); border-color: color-mix(in srgb, var(--x-gcal) 45%, var(--x-line)); }
+      .x-gc-btn--chip svg { color: var(--x-gcal); }
+      .x-gc-btn.is-busy svg { animation: x-gc-spin 1s linear infinite; }
+      @keyframes x-gc-spin { to { transform: rotate(360deg); } }
+      .x-md .is-gcal { background: var(--x-gcal); }
+      .x-md-bar { flex-wrap: wrap; }
+      a.x-md-item { text-decoration: none; }
+      .x-md-item .x-gc-ic { color: var(--x-gcal); }
+      .x-set { position: fixed; z-index: 80; width: 288px; max-width: calc(100vw - 16px); padding: 12px; display: grid; gap: 8px; background: var(--x-tile); color: var(--text-primary); border: 1px solid var(--x-line); border-radius: var(--r-s); box-shadow: var(--hark-shadow); font: var(--type-small); }
+      .x-set[hidden] { display: none; }
+      .x-set h3 { margin: 0; display: flex; align-items: center; gap: 8px; font: var(--type-label); font-weight: var(--weight-medium); }
+      .x-set h3 + p { margin: 0; }
+      .x-set p { margin: 0; font: var(--type-caption); color: var(--text-secondary); }
+      .x-set-row { display: flex; flex-wrap: wrap; gap: 8px; }
+      .x-set-div { height: 1px; margin: 4px 0; background: var(--x-line); }
+      :root[data-theme="black"] .x-set { background: #000; }
+      @media (prefers-reduced-motion: reduce) { .x-gc-btn.is-busy svg { animation: none; } }
+    </style>
   </head>
   <body>
     <div class="page" id="top">
@@ -873,6 +952,8 @@
     </div>
     <script src="hark.js"></script>
     <script>
+      /* Google Calendar OAuth client ID (web). Replaced at deploy time. */
+      const GCAL_CLIENT_ID = "218359368942-727hfbbl4mjkn878fv4glqfbbg7boctl.apps.googleusercontent.com";
       /* ---------- store: localStorage with an in-memory fallback ---------- */
       var store = (function () {
         var KEY = "notes-app.v1", mem = [], ok = true, subs = [], fresh = false;
@@ -2415,7 +2496,7 @@
           if (!b) return;
           if (b.hasAttribute("data-sb-home")) go("dashboard");
           else if (b.hasAttribute("data-sb-new")) clickOld(".x-new");
-          else if (b.hasAttribute("data-sb-gear")) { var s = document.querySelector('[data-act="shortcuts"]'); if (s) s.click(); }
+          else if (b.hasAttribute("data-sb-gear")) { if (window.XSettings) XSettings.toggle(b); else { var s = document.querySelector('[data-act="shortcuts"]'); if (s) s.click(); } }
           else if (b.hasAttribute("data-sb-sw")) { e.stopPropagation(); openMenu(menu.hidden); }
           else if (b.dataset.sbSec) { openMenu(false); swBtn.focus(); go(b.dataset.sbSec, ROWS[b.dataset.sbSec][0][0]); }
           else if (b.dataset.sbItem) go(cur.sec, b.dataset.sbItem);
@@ -2525,15 +2606,24 @@
           caret = b && !b.hidden ? b.selectionStart : b ? b.value.length : 0;
           build();
           menu.hidden = false; menu.classList.remove("is-open");
-          var r = plus.getBoundingClientRect(), w = menu.offsetWidth, h = menu.offsetHeight;
-          var left = Math.max(8, Math.min(r.right - w, window.innerWidth - w - 8)), top = r.bottom + 8;
-          if (top + h > window.innerHeight - 8) top = Math.max(8, window.innerHeight - h - 8);
-          menu.style.left = left + "px"; menu.style.top = top + "px";
+          place();
           void menu.offsetWidth;
           menu.classList.add("is-open");
           plus.setAttribute("aria-expanded", "true");
           focusables()[0].focus();
         }
+        /* anchor below the + and extend to its left; stay inside the viewport, scrolling rather than covering the button */
+        function place() {
+          if (!plus || menu.hidden) return;
+          var r = plus.getBoundingClientRect(), vw = document.documentElement.clientWidth || window.innerWidth, vh = window.innerHeight;
+          menu.style.maxHeight = "";
+          var w = menu.offsetWidth, top = r.bottom + 6, room = vh - top - 8;
+          if (room < 160) { menu.style.maxHeight = Math.max(160, r.top - 14) + "px"; top = Math.max(8, r.top - 6 - menu.offsetHeight); }
+          else if (menu.offsetHeight > room) menu.style.maxHeight = room + "px";
+          menu.style.left = Math.max(8, Math.min(r.right - w, vw - w - 8)) + "px";
+          menu.style.top = top + "px";
+        }
+        window.addEventListener("resize", place);
         function close(refocus) {
           if (menu.hidden) return;
           menu.classList.remove("is-open");
@@ -2620,6 +2710,249 @@
       })();
     </script>
     <script>
+      /* Google Calendar: read-only sync in the browser. The access token lives only in memory and sessionStorage. */
+      var XG = (function () {
+        var PLACEHOLDER = "__GCAL_" + "CLIENT_ID__";
+        var SCOPE = "https://www.googleapis.com/auth/calendar.readonly", HINT = "burlarakesh1458@gmail.com";
+        var EK = "notes-app.gcal.v1", TK = "notes-app.gcal.token";
+        var tok = null, client = null, gis = null, subs = [], busy = false;
+        var cache = { events: [], synced: 0, linked: false };
+        try { var c0 = JSON.parse(localStorage.getItem(EK) || "null"); if (c0 && Array.isArray(c0.events)) cache = { events: c0.events, synced: +c0.synced || 0, linked: !!c0.linked }; } catch (e) {}
+        try { var t0 = JSON.parse(sessionStorage.getItem(TK) || "null"); if (t0 && t0.t && t0.exp > Date.now()) tok = t0; } catch (e) {}
+        function S(p) { return '<svg class="x-gc-ic" viewBox="0 0 24 24" aria-hidden="true">' + p + "</svg>"; }
+        var IC = {
+          cal: S('<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>'),
+          sync: S('<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>'),
+          off: S('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>')
+        };
+        function pad(n) { return (n < 10 ? "0" : "") + n; }
+        function key(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+        function hm(ms) { return new Date(ms).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); }
+        function cid() { return typeof GCAL_CLIENT_ID === "string" ? GCAL_CLIENT_ID.trim() : ""; }
+        function pending() { var c = cid(); return !c || c === PLACEHOLDER; }
+        function valid() { return !!(tok && tok.exp > Date.now()); }
+        function status() { return pending() ? "pending" : valid() ? "on" : cache.linked ? "expired" : "off"; }
+        function emit() { subs.forEach(function (f) { try { f(); } catch (e) {} }); }
+        function persist() { try { localStorage.setItem(EK, JSON.stringify(cache)); } catch (e) {} }
+        function drop() { tok = null; try { sessionStorage.removeItem(TK); } catch (e) {} }
+        function say(m) { if (typeof toast === "function") toast(m); }
+
+        function load() {
+          if (window.google && google.accounts && google.accounts.oauth2) return Promise.resolve();
+          if (gis) return gis;
+          gis = new Promise(function (res, rej) {
+            var s = document.createElement("script");
+            s.src = "https://accounts.google.com/gsi/client"; s.async = true;
+            s.onload = function () { res(); };
+            s.onerror = function () { gis = null; s.remove(); rej(); };
+            document.head.appendChild(s);
+          });
+          return gis;
+        }
+        function onToken(r) {
+          if (!r || r.error || !r.access_token) { emit(); say("Google Calendar wasn't connected"); return; }
+          tok = { t: r.access_token, exp: Date.now() + Math.max(60, (+r.expires_in || 3600) - 60) * 1000 };
+          try { sessionStorage.setItem(TK, JSON.stringify(tok)); } catch (e) {}
+          cache.linked = true; persist(); emit(); sync(true);
+        }
+        function connect() {
+          if (pending()) return;
+          /* Google only accepts https origins: move an http page to https on Connect/Reconnect */
+          if (location.protocol === "http:") { location.replace("https:" + location.href.substring(location.protocol.length)); return; }
+          load().then(function () {
+            if (!client) client = google.accounts.oauth2.initTokenClient({
+              client_id: cid(), scope: SCOPE, login_hint: HINT, hint: HINT, callback: onToken,
+              error_callback: function (e) { emit(); if (e && e.type === "popup_failed_to_open") say("Allow pop-ups to connect Google Calendar"); }
+            });
+            client.requestAccessToken({ prompt: cache.linked ? "" : "consent", login_hint: HINT });
+          }, function () { say("Couldn't load Google sign-in"); });
+        }
+        function norm(e) {
+          if (!e || e.status === "cancelled" || !e.start) return null;
+          var all = !!e.start.date, s, en, d0, d1;
+          if (all) {
+            d0 = e.start.date; s = +new Date(d0 + "T00:00");
+            var x = new Date(((e.end && e.end.date) || d0) + "T12:00"); x.setDate(x.getDate() - 1); d1 = key(x); if (d1 < d0) d1 = d0;
+            en = +new Date(d1 + "T23:59");
+          } else {
+            s = Date.parse(e.start.dateTime); if (isNaN(s)) return null;
+            en = e.end && e.end.dateTime ? Date.parse(e.end.dateTime) : s; if (isNaN(en)) en = s;
+            d0 = key(new Date(s)); d1 = key(new Date(Math.max(s, en - 1)));
+          }
+          return { id: String(e.id || ""), title: String(e.summary || "(No title)").slice(0, 300), start: s, end: en, allDay: all, d0: d0, d1: d1, link: typeof e.htmlLink === "string" && /^https:\/\//.test(e.htmlLink) ? e.htmlLink : "" };
+        }
+        function sync(loud) {
+          if (!valid()) { if (tok) { drop(); emit(); } return Promise.resolve(false); }
+          if (busy) return Promise.resolve(false);
+          busy = true; emit();
+          var n = new Date(), a = new Date(n.getFullYear(), n.getMonth() - 1, 1), b = new Date(n.getFullYear(), n.getMonth() + 3, n.getDate(), 23, 59, 59);
+          var url = "https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=" + encodeURIComponent(a.toISOString()) + "&timeMax=" + encodeURIComponent(b.toISOString()) + "&singleEvents=true&orderBy=startTime&maxResults=250";
+          return fetch(url, { headers: { Authorization: "Bearer " + tok.t } }).then(function (r) {
+            if (r.status === 401) { drop(); throw "auth"; }
+            if (!r.ok) throw "http";
+            return r.json();
+          }).then(function (j) {
+            cache.events = (j.items || []).map(norm).filter(Boolean); cache.synced = Date.now(); cache.linked = true; persist();
+            busy = false; emit();
+            if (loud) say("Calendar synced · " + cache.events.length + " event" + (cache.events.length === 1 ? "" : "s"));
+            return true;
+          }).catch(function (e) { busy = false; emit(); if (loud && e !== "auth") say("Calendar sync failed"); return false; });
+        }
+        function disconnect() {
+          try { if (tok && window.google && google.accounts && google.accounts.oauth2) google.accounts.oauth2.revoke(tok.t, function () {}); } catch (e) {}
+          drop(); cache = { events: [], synced: 0, linked: false };
+          try { localStorage.removeItem(EK); } catch (e) {}
+          emit(); say("Google Calendar disconnected");
+        }
+        function on(k) { return cache.events.filter(function (e) { return e.d0 <= k && k <= e.d1; }).sort(function (a, b) { return (b.allDay - a.allDay) || a.start - b.start; }); }
+        function upcoming(ms) { var T = key(new Date(ms)); return cache.events.filter(function (e) { return e.allDay ? e.d1 >= T : e.end >= ms; }); }
+        function label(e) { return e.allDay ? "All day" : hm(e.start); }
+        /* the one main button, by state; ctx "dash" shows a compact synced button when connected */
+        function button(ctx) {
+          var s = status();
+          if (s === "pending") return '<button type="button" class="x-gc-btn" disabled title="Add a Google client ID to enable sync">' + IC.cal + "<span>Calendar setup pending</span></button>";
+          if (s === "off") return '<button type="button" class="x-gc-btn" data-gc="connect">' + IC.cal + "<span>Connect Google Calendar</span></button>";
+          if (s === "expired") return '<button type="button" class="x-gc-btn x-gc-btn--chip" data-gc="connect" title="Session ended. Reconnect to refresh events">' + IC.sync + "<span>Reconnect</span></button>";
+          if (ctx !== "dash") return "";
+          return '<button type="button" class="x-gc-btn' + (busy ? " is-busy" : "") + '" data-gc="sync" title="Google Calendar' + (cache.synced ? ", last synced " + hm(cache.synced) : "") + '. Sync now">' + IC.sync + "<span>" + (busy ? "Syncing…" : cache.synced ? "Synced " + hm(cache.synced) : "Sync") + "</span></button>";
+        }
+
+        document.addEventListener("click", function (e) {
+          var b = e.target.closest && e.target.closest("[data-gc]"); if (!b || b.disabled) return;
+          var a = b.dataset.gc;
+          if (a === "connect") connect(); else if (a === "sync") sync(true); else if (a === "disconnect") disconnect();
+        });
+        /* fetch the sign-in script only when someone is about to use it */
+        ["pointerover", "focusin"].forEach(function (t) { document.addEventListener(t, function (e) { if (!pending() && e.target.closest && e.target.closest('[data-gc="connect"]')) load().catch(function () {}); }); });
+        setInterval(function () { if (tok && !valid()) { drop(); emit(); } }, 60000);
+        setInterval(function () { if (valid()) sync(false); }, 15 * 60 * 1000);
+        if (valid()) setTimeout(function () { sync(false); }, 0);
+
+        return {
+          status: status, busy: function () { return busy; }, synced: function () { return cache.synced; }, linked: function () { return cache.linked; },
+          events: function () { return cache.events.slice(); }, on: on, upcoming: upcoming, label: label, button: button, icon: IC,
+          connect: connect, sync: sync, disconnect: disconnect, sub: function (f) { subs.push(f); }
+        };
+      })();
+
+      /* Settings popover, opened from the gear at the bottom of the sidebar */
+      (function () {
+        var pop = document.createElement("div"), anchor = null;
+        pop.className = "x-set"; pop.id = "xSettings"; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", "Settings"); pop.hidden = true;
+        document.body.appendChild(pop);
+        function hm(ms) { return new Date(ms).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }); }
+        function render() {
+          var s = XG.status(), syn = XG.synced(), n = XG.events().length;
+          var line = {
+            pending: "Setup pending. Sync turns on once a Google client ID is added.",
+            off: "Read-only. Your events appear on the Dashboard calendar and in Up next.",
+            on: XG.busy() ? "Syncing…" : "Connected · " + n + " event" + (n === 1 ? "" : "s") + (syn ? " · synced " + hm(syn) : ""),
+            expired: "Session ended. Showing events from " + (syn ? hm(syn) : "the last sync") + "."
+          }[s];
+          pop.innerHTML = "<h3>" + XG.icon.cal + "Google Calendar</h3><p>" + line + '</p><div class="x-set-row">' + XG.button("set") +
+            (s === "on" ? '<button type="button" class="x-gc-btn' + (XG.busy() ? " is-busy" : "") + '" data-gc="sync">' + XG.icon.sync + "<span>Sync now</span></button>" : "") +
+            (s === "on" || s === "expired" ? '<button type="button" class="x-gc-btn" data-gc="disconnect">' + XG.icon.off + "<span>Disconnect</span></button>" : "") +
+            '</div><div class="x-set-div" role="separator"></div><h3>Shortcuts</h3><p>Ctrl N new note · Ctrl K search · Ctrl J assistant · Esc close</p>';
+        }
+        function place() {
+          if (!anchor || pop.hidden) return;
+          var r = anchor.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+          var left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8)), top = r.top - h - 8;
+          if (top < 8) top = Math.min(r.bottom + 8, window.innerHeight - h - 8);
+          pop.style.left = left + "px"; pop.style.top = Math.max(8, top) + "px";
+        }
+        function open(b) { anchor = b; render(); pop.hidden = false; place(); b.setAttribute("aria-expanded", "true"); var f = pop.querySelector("button:not(:disabled)"); if (f) f.focus(); }
+        function close(refocus) { if (pop.hidden) return; pop.hidden = true; if (anchor) { anchor.setAttribute("aria-expanded", "false"); if (refocus) anchor.focus(); } }
+        window.XSettings = { toggle: function (b) { if (pop.hidden) open(b); else close(false); }, close: close };
+        XG.sub(function () { if (!pop.hidden) { var had = pop.contains(document.activeElement); render(); place(); if (had) { var f = pop.querySelector("button:not(:disabled)"); if (f) f.focus(); } } });
+        document.addEventListener("click", function (e) { if (!pop.hidden && !pop.contains(e.target) && !(anchor && anchor.contains(e.target))) close(false); });
+        pop.addEventListener("keydown", function (e) { if (e.key === "Escape") { e.stopPropagation(); close(true); } });
+        window.addEventListener("resize", function () { close(false); });
+      })();
+
+      /* Focus mode: an open note takes the screen; the sidebar becomes a rail with the note list */
+      (function () {
+        var side = document.querySelector(".x-side"), sb = side && side.querySelector(".x-sb");
+        if (!sb || typeof state !== "object") return;
+        var desk = window.matchMedia("(min-width: 761px)"), RK = "notes-app.rail-min", min = false, queued = false;
+        try { min = localStorage.getItem(RK) === "1"; } catch (e) {}
+        function P(d) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + d + "</svg>"; }
+        var I = {
+          back: P('<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>'),
+          close: P('<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/>'),
+          open: P('<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m14 9 3 3-3 3"/>')
+        };
+        function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+
+        var tog = document.createElement("button");
+        tog.type = "button"; tog.className = "x-sb-ic x-fm-tog";
+        sb.querySelector(".x-sb-top").appendChild(tog);
+        var back = document.createElement("button");
+        back.type = "button"; back.className = "x-sb-row x-fm-back"; back.title = "Back to notes (Esc)"; back.setAttribute("aria-label", "Back to notes");
+        back.innerHTML = I.back + "<span>Back to notes</span>";
+        sb.insertBefore(back, sb.querySelector(".x-sb-sw"));
+        var wrap = document.createElement("div");
+        wrap.className = "x-fm-notes";
+        wrap.innerHTML = '<p class="x-sb-label" id="xFmLabel">Notes</p><nav class="x-fm-list" aria-labelledby="xFmLabel"></nav>';
+        sb.insertBefore(wrap, sb.querySelector(".x-sb-foot"));
+        var list = wrap.querySelector(".x-fm-list"), sbBody = sb.querySelector(".x-sb-body");
+
+        function paintTog() {
+          tog.innerHTML = min ? I.open : I.close;
+          tog.title = min ? "Expand sidebar" : "Collapse sidebar";
+          tog.setAttribute("aria-label", tog.title); tog.setAttribute("aria-pressed", String(min));
+          app.classList.toggle("is-rail-min", min);
+          titles();
+        }
+        /* icon-only rows still say what they are */
+        function titles() {
+          sb.querySelectorAll(".x-sb-body .x-sb-row, .x-sb-swbtn").forEach(function (b) {
+            var s = b.querySelector("span"); if (!s) return;
+            if (min) { b.title = s.textContent; b.setAttribute("aria-label", s.textContent); } else { b.removeAttribute("title"); if (b.classList.contains("x-sb-row")) b.removeAttribute("aria-label"); }
+          });
+        }
+        function renderList() {
+          var cur = state.sel, ns = typeof visible === "function" ? visible() : [];
+          if (cur && !ns.some(function (n) { return n.id === cur; })) { var c = store.getNote(cur); if (c) ns.unshift(c); }
+          ns = ns.slice(0, 200);
+          list.innerHTML = ns.length ? ns.map(function (n) {
+            return '<button type="button" class="x-fm-note" data-fm-note="' + esc(n.id) + '"' + (n.id === cur ? ' aria-current="true"' : "") + "><span>" + esc(n.title || "Untitled") + "</span><small>" + esc(when(n.updated)) + "</small></button>";
+          }).join("") : '<p class="x-fm-empty">No other notes</p>';
+          var a = list.querySelector('[aria-current="true"]');
+          if (a && a.offsetTop < list.scrollTop || a && a.offsetTop + a.offsetHeight > list.scrollTop + list.clientHeight) a.scrollIntoView({ block: "nearest" });
+        }
+        function sync() {
+          queued = false;
+          var on = app.classList.contains("is-editing") && !app.classList.contains("is-dash") && !app.classList.contains("is-nx") && !!state.sel;
+          if (on !== app.classList.contains("is-focus")) app.classList.toggle("is-focus", on);
+          if (on) renderList();
+        }
+        function soon() { if (!queued) { queued = true; requestAnimationFrame(sync); } }
+        function exit() {
+          var id = state.sel;
+          select(null);
+          requestAnimationFrame(function () { var c = id && cardsEl.querySelector('[data-id="' + id + '"]'); if (c) c.focus({ preventScroll: false }); });
+        }
+
+        /* note changes, view changes and editing state all flow through here */
+        var baseSelect = window.select;
+        window.select = function () { var r = baseSelect.apply(this, arguments); soon(); return r; };
+        var baseView = window.setView;
+        window.setView = function (v) {
+          if (desk.matches && app.classList.contains("is-editing")) { flush(); state.sel = null; app.classList.remove("is-editing"); renderEditor(); }
+          return baseView.apply(this, arguments);
+        };
+        new MutationObserver(soon).observe(app, { attributes: true, attributeFilter: ["class"] });
+        store.subscribe(soon);
+        new MutationObserver(titles).observe(sbBody, { childList: true });
+
+        tog.addEventListener("click", function () { min = !min; try { localStorage.setItem(RK, min ? "1" : "0"); } catch (e) {} paintTog(); });
+        back.addEventListener("click", exit);
+        list.addEventListener("click", function (e) { var b = e.target.closest("[data-fm-note]"); if (b && b.dataset.fmNote !== state.sel) select(b.dataset.fmNote); });
+        paintTog(); sync();
+      })();
+    </script>
+    <script>
       /* Minimal dashboard: greeting, month calendar, tracker. Replaces every earlier dashboard renderer. */
       (function () {
         var dash = document.getElementById("dash");
@@ -2651,12 +2984,14 @@
           return n + "wk";
         }
         function plural(n, w) { return n + " " + w + (n === 1 ? "" : "s"); }
+        function gcalOn(k) { return window.XG ? XG.on(k) : []; }
 
         function pop(k) {
-          var rs = remsOn(k), ts = tasksOn(k), ms = Date.now(), T = today(), d = new Date(k + "T12:00");
+          var rs = remsOn(k), ts = tasksOn(k), gs = gcalOn(k), ms = Date.now(), T = today(), d = new Date(k + "T12:00");
           var h = '<div class="x-md-pop" role="dialog" aria-label="' + esc(ds(d)) + '"><div class="x-md-pophead"><span>' + esc(ds(d)) + '</span><button class="x-md-ib" data-md-close aria-label="Close">×</button></div>';
-          if (!rs.length && !ts.length) h += '<p class="x-md-muted">Nothing on this day.</p>';
+          if (!rs.length && !ts.length && !gs.length) h += '<p class="x-md-muted">Nothing on this day.</p>';
           else h += '<ul class="x-md-list">' +
+            gs.map(function (g) { var inner = '<i class="x-md-dot is-gcal"></i><span>' + esc(g.title) + "</span><small>" + esc(XG.label(g)) + "</small>"; return "<li>" + (g.link ? '<a class="x-md-item" href="' + esc(g.link) + '" target="_blank" rel="noopener" title="Open in Google Calendar">' + inner + "</a>" : '<span class="x-md-item">' + inner + "</span>") + "</li>"; }).join("") +
             rs.map(function (r) { return '<li><button class="x-md-item' + (r.done ? " is-done" : "") + '" data-md-go="reminders"><i class="x-md-dot ' + (!r.done && r.at < ms ? "is-late" : "is-rem") + '"></i><span>' + esc(r.title) + "</span><small>" + time(r.at) + "</small></button></li>"; }).join("") +
             ts.map(function (t) { return '<li><button class="x-md-item' + (t.done ? " is-done" : "") + '" data-md-go="todo:' + bucket(t, T) + '"><i class="x-md-dot ' + (!t.done && t.due < T ? "is-late" : "is-task") + '"></i><span>' + esc(t.title) + "</span><small>Task</small></button></li>"; }).join("") + "</ul>";
           h += adding
@@ -2676,24 +3011,32 @@
 
           var first = new Date(vy, vm, 1), days = new Date(vy, vm + 1, 0).getDate(), off = (first.getDay() + 6) % 7;
           h += '<div class="x-md-cols"><section class="x-md-cal" aria-label="Calendar"><div class="x-md-bar"><h3>' + esc(first.toLocaleDateString(undefined, { month: "long", year: "numeric" })) + "</h3>" +
-            '<button class="x-md-ib" data-md-nav="-1" aria-label="Previous month">‹</button><button class="x-md-ib" data-md-nav="1" aria-label="Next month">›</button><button class="x-md-btn" data-md-today>Today</button></div><div class="x-md-grid">' +
+            (window.XG ? XG.button("dash") : "") + '<button class="x-md-ib" data-md-nav="-1" aria-label="Previous month">‹</button><button class="x-md-ib" data-md-nav="1" aria-label="Next month">›</button><button class="x-md-btn" data-md-today>Today</button></div><div class="x-md-grid">' +
             WD.map(function (w) { return '<span class="x-md-wd" aria-hidden="true">' + w + "</span>"; }).join("");
           for (var i = 0; i < off; i++) h += "<span></span>";
           for (var d = 1; d <= days; d++) {
             var k = vy + "-" + pad(vm + 1) + "-" + pad(d), rs = remsOn(k).filter(function (r) { return !r.done; }), ts = tasksOn(k).filter(function (t) { return !t.done; });
-            var late = (k < T ? ts.length : 0) + rs.filter(function (r) { return r.at < ms; }).length, remN = rs.length - rs.filter(function (r) { return r.at < ms; }).length, taskN = k < T ? 0 : ts.length, all = rs.length + ts.length;
-            h += '<button class="x-md-day' + (k === T ? " is-today" : "") + (k === openK ? " is-open" : "") + '" data-md-day="' + k + '" aria-label="' + esc(ds(new Date(vy, vm, d)) + (all ? ", " + plural(all, "item") : "")) + '"' + (k === T ? ' aria-current="date"' : "") + '>' +
-              '<span class="x-md-num">' + d + '</span><span class="x-md-dots">' + (remN ? '<i class="is-rem"></i>' : "") + (taskN ? '<i class="is-task"></i>' : "") + (late ? '<i class="is-late"></i>' : "") + (all > 2 ? "<small>+" + (all - 2) + "</small>" : "") + "</span></button>";
+            var gN = gcalOn(k).length;
+            var late = (k < T ? ts.length : 0) + rs.filter(function (r) { return r.at < ms; }).length, remN = rs.length - rs.filter(function (r) { return r.at < ms; }).length, taskN = k < T ? 0 : ts.length, all = rs.length + ts.length + gN;
+            h += '<button class="x-md-day' + (k === T ? " is-today" : "") + (k === openK ? " is-open" : "") + '" data-md-day="' + k + '" aria-label="' + esc(ds(new Date(vy, vm, d)) + (all ? ", " + plural(all, "item") : "") + (gN ? ", " + plural(gN, "calendar event") : "")) + '"' + (k === T ? ' aria-current="date"' : "") + '>' +
+              '<span class="x-md-num">' + d + '</span><span class="x-md-dots">' + (gN ? '<i class="is-gcal"></i>' : "") + (remN ? '<i class="is-rem"></i>' : "") + (taskN ? '<i class="is-task"></i>' : "") + (late ? '<i class="is-late"></i>' : "") + (all > 2 ? "<small>+" + (all - 2) + "</small>" : "") + "</span></button>";
           }
           h += "</div>" + (openK ? pop(openK) : "") + "</section>";
 
-          var next = L("reminders").filter(function (r) { return !r.done && r.at >= ms; }).sort(function (a, b) { return a.at - b.at; }).slice(0, 3);
+          var next = L("reminders").filter(function (r) { return !r.done && r.at >= ms; }).map(function (r) { return { r: r, at: r.at }; })
+            .concat((window.XG ? XG.upcoming(ms) : []).map(function (g) { return { g: g, at: g.allDay ? Math.max(g.start, +new Date(T + "T00:00")) : g.start }; }))
+            .sort(function (a, b) { return a.at - b.at; }).slice(0, 4);
+          function upItem(x) {
+            if (x.r) return '<li><button class="x-md-item" data-md-go="reminders"><span>' + esc(x.r.title) + "</span><small>" + esc(when(x.r.at)) + "</small></button></li>";
+            var g = x.g, lab = g.allDay ? when(x.at).split(" · ")[0] + " · All day" : when(g.start), inner = XG.icon.cal + '<span>' + esc(g.title) + "</span><small>" + esc(lab) + "</small>";
+            return "<li>" + (g.link ? '<a class="x-md-item" href="' + esc(g.link) + '" target="_blank" rel="noopener" aria-label="' + esc(g.title + ", Google Calendar, " + lab) + '">' + inner + "</a>" : '<span class="x-md-item">' + inner + "</span>") + "</li>";
+          }
           h += '<aside class="x-md-side" aria-label="Tracker"><section><div class="x-md-sh"><h3>Today\u2019s tasks</h3>' + (dueT.length > 5 ? '<button class="x-md-link" data-md-go="todo:today">View all</button>' : "") + "</div>" +
             (dueT.length ? dueT.slice(0, 5).map(function (t) { return '<label class="x-md-check' + (t.done ? " is-done" : "") + '"><input type="checkbox" data-md-task="' + esc(t.id) + '"' + (t.done ? " checked" : "") + " /><span>" + esc(t.title) + "</span></label>"; }).join("") : '<p class="x-md-muted">Nothing due today.</p>') +
             '</section><section><div class="x-md-sh"><h3>Habits</h3></div>' +
             (habits.length ? '<div class="x-md-pills">' + habits.map(function (x) { var on = did(x, T); return '<button class="x-md-pill" data-md-habit="' + esc(x.id) + '" aria-pressed="' + on + '" aria-label="' + esc(x.name) + (on ? ", done today" : ", not done today") + '">' + esc((x.emoji ? x.emoji + " " : "") + x.name) + "<small>🔥" + streak(x) + "</small></button>"; }).join("") + "</div>" : '<p class="x-md-muted">No habits yet.</p>') +
-            '</section><section><div class="x-md-sh"><h3>Next reminders</h3></div>' +
-            (next.length ? '<ul class="x-md-list">' + next.map(function (r) { return '<li><button class="x-md-item" data-md-go="reminders"><span>' + esc(r.title) + "</span><small>" + esc(when(r.at)) + "</small></button></li>"; }).join("") + "</ul>" : '<p class="x-md-muted">Nothing coming up.</p>') +
+            '</section><section><div class="x-md-sh"><h3>' + (next.some(function (x) { return x.g; }) ? "Up next" : "Next reminders") + "</h3></div>" +
+            (next.length ? '<ul class="x-md-list">' + next.map(upItem).join("") + "</ul>" : '<p class="x-md-muted">Nothing coming up.</p>') +
             "</section></aside></div>";
           box.innerHTML = h;
 
@@ -2712,6 +3055,7 @@
         var save = NX.save; NX.save = function () { var r = save.apply(this, arguments); soon(); return r; };
         new MutationObserver(soon).observe(dash, { attributes: true, attributeFilter: ["hidden"] });
         setInterval(soon, 60000);
+        if (window.XG) XG.sub(soon);
 
         box.addEventListener("click", function (e) {
           var t = e.target, x; e.mdHandled = true;
@@ -3077,6 +3421,7 @@
           if ((m = s.match(/^(?:please\s+)?(?:remind me|set (?:a )?reminder|add (?:a )?reminder)\s*(?:to\s+|about\s+|that\s+|:\s*)?(.+)$/i))) return { intent: "addReminder", text: m[1] };
           if ((m = s.match(/\bwhen\s+(?:is|are|was)\s+(?:the\s+|my\s+)?(.+?)\s+due\b/i)) || (m = s.match(/\bwhen'?s\s+(?:the\s+|my\s+)?(.+?)\s+due\b/i)) || (m = s.match(/\b(?:due date|deadline)\s+(?:of|for)\s+(.+?)\??$/i))) return { intent: "due", q: m[1] };
           if ((m = s.match(/^(?:find|search)(?:\s+(?:my\s+)?notes?)?\s+(?:for\s+|about\s+|on\s+)?(.+?)\??$/i)) || (m = s.match(/\bnotes?\s+(?:about|on|for|with|mentioning)\s+(.+?)\??$/i))) return { intent: "notes", q: m[1] };
+          if (/\b(calendar|events?|meetings?|schedule)\b/i.test(s) || /\bwhat'?s\s+on\b/i.test(s)) return { intent: "calendar", range: /tomorrow/i.test(s) ? "tomorrow" : /week/i.test(s) ? "week" : "today" };
           if (/\b(overdue|late|missed)\b/i.test(s)) return { intent: "overdue" };
           if (/\breminders?\b/i.test(s)) return { intent: "reminders", range: /tomorrow/i.test(s) ? "tomorrow" : /week/i.test(s) ? "week" : "today" };
           if (/\b(habits?|streaks?)\b/i.test(s)) return { intent: "habits", q: s.replace(/\b(how'?s|how is|how are|my|habits?|streaks?|what|is|are|the|show|going)\b|[?']/gi, " ").trim() };
@@ -3093,7 +3438,7 @@
           while (met(ws)) { cur++; ws.setDate(ws.getDate() - 7); }
           return cur + (cur === 1 ? " week" : " weeks");
         }
-        var HELP = ["What tasks are left?", "What's overdue?", "My reminders this week", "When is the report due?", "Notes about meeting", "How's my gym habit?", "Add task buy milk tomorrow", "Remind me to call mom at 5pm"];
+        var HELP = ["What tasks are left?", "What's on my calendar today?", "What's overdue?", "My reminders this week", "When is the report due?", "Notes about meeting", "How's my gym habit?", "Add task buy milk tomorrow", "Remind me to call mom at 5pm"];
         function answer(text, src, now) {
           now = now || Date.now();
           var p = parse(text), T = key(now), PR = { High: 0, Med: 1, Low: 2 }, tasks = (src.tasks || []).filter(function (t) { return !t.done; });
@@ -3106,6 +3451,17 @@
             var top = tasks.slice().sort(function (a, b) { return rank(a) < rank(b) ? -1 : rank(a) > rank(b) ? 1 : 0; }).slice(0, 5);
             if (!tasks.length) return { text: "All clear. No tasks left." };
             return { text: td.length + " today, " + od.length + " overdue, " + (tasks.length - td.length - od.length) + " upcoming.\nTop " + top.length + ":", chips: top.map(tchip), say: top.map(function (t) { return t.title; }).join(", ") };
+          }
+          if (p.intent === "calendar") {
+            if (!src.calendar) return { text: "Google Calendar isn't connected. Connect it from Settings at the bottom of the sidebar or the Dashboard calendar." };
+            var c0 = new Date(now); c0.setHours(12, 0, 0, 0); if (p.range === "tomorrow") c0.setDate(c0.getDate() + 1);
+            var ka = key(c0), kb = ka; if (p.range === "week") { var c1 = new Date(c0); c1.setDate(c1.getDate() + 6); kb = key(c1); }
+            var lb = p.range === "week" ? "this week" : p.range;
+            var ev = (src.events || []).filter(function (e) { return e.d0 <= kb && e.d1 >= ka; }).sort(function (x, y) { return x.start - y.start; });
+            var stale = src.calendar === "expired" ? " (from the last sync; reconnect to refresh)" : "";
+            if (!ev.length) return { text: "Nothing on your calendar " + lb + "." + stale };
+            var ech = ev.slice(0, 8).map(function (e) { var sub = (p.range === "week" ? day(Math.max(e.start, +new Date(ka + "T00:00"))) + " · " : "") + (e.allDay ? "All day" : hm(e.start)); return { label: e.title, sub: sub, open: e.link ? "url:" + e.link : "ask:what's on my calendar " + (p.range === "week" ? "this week" : p.range) }; });
+            return { text: ev.length + " event" + (ev.length > 1 ? "s" : "") + " on your calendar " + lb + stale + ":", chips: ech, say: ev.slice(0, 8).map(function (e) { return e.title + (e.allDay ? ", all day" : " at " + hm(e.start)); }).join(", ") };
           }
           if (p.intent === "overdue") {
             var ro = rem.filter(function (r) { return r.at < now; });
@@ -3183,6 +3539,7 @@
           var n = typeof current === "function" && document.getElementById("app").classList.contains("is-editing") ? current() : null;
           return {
             tasks: D().tasks || [], reminders: D().reminders || [], projects: D().projects || [], habits: D().habits || [],
+            calendar: window.XG && (XG.status() === "on" || XG.status() === "expired" || XG.events().length) ? XG.status() : "", events: window.XG ? XG.events() : [],
             notes: typeof store === "object" ? store.getNotes().filter(function (x) { return !x.archived; }) : [], note: n ? n.body || "" : null,
             canPass: function (t, body) { return typeof NoteAI === "object" && !NoteAI.run(t, body).error; },
             addTask: function (o) { var t = { id: NX.id(), title: o.title, done: false, priority: "Med", due: o.due, project: "" }; D().tasks.push(t); NX.save(); redraw("todo"); return t; },
@@ -3215,6 +3572,7 @@
         function openRef(ref) {
           var i = ref.indexOf(":"), k = ref.slice(0, i), id = ref.slice(i + 1), nav = { task: "todo", reminder: "reminders", habit: "habits" }[k];
           if (k === "ask") return send(id);
+          if (k === "url") { if (/^https:\/\//.test(id)) window.open(id, "_blank", "noopener"); return; }
           if (nav) { var b = document.querySelector('[data-nx="' + nav + '"]'); if (b) b.click(); }
           else if (k === "note" && typeof select === "function") { NX.hide(); if (typeof setView === "function" && state.view !== "notes") setView("notes"); select(id); }
           if (phone.matches) setOpen(false, true);
